@@ -13,11 +13,13 @@ import { validateImage } from "../../../services";
 
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import TripDialog from "./TripDialog";
 
 export default function Itinerary({  itineraries }: any) {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isShare=false;
 
 
     return (
@@ -75,7 +77,7 @@ const ItineraryItem = ({ isMobile, item }: any) => {
                     ))}
                 </List>
                 <Box >
-                 {/* {!isShare && <TripDialog isMobile={isMobile} day={item?.day} realDay={item?.realDay} /> }    */}
+                 {!isShare && <TripDialog isMobile={isMobile} day={item?.day} realDay={item?.realDay} /> }   
                 </Box>
             </Collapse>
         </Box>
