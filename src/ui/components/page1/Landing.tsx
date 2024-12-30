@@ -23,7 +23,7 @@ export default function Landing() {
                 }
                 {isMobile &&
                     <Box>
-                        <img src="/page1/ic_ld_xs.svg" width={"100%"} />
+                        <img src="/page1/ic_ld_xs.png" width={"100%"} />
                     </Box>
                 }
             </Box>
@@ -39,7 +39,7 @@ export default function Landing() {
                     },
                     marginTop: {
                         md: "-13.5%",
-                        xs: "-36%",
+                        xs: "-68%",
                     }
                 }}>
                 <FormCustom />

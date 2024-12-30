@@ -19,10 +19,6 @@ export default function Part4() {
                     md: "80px",
                     xs: "48px",
                 },
-                marginBottom: {
-                    md: "109px",
-                    xs: "51px",
-                }
             }}>
             <Box sx={{
                 borderRadius: {

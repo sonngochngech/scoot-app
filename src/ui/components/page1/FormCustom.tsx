@@ -9,24 +9,29 @@ import {
     useMediaQuery,
     Checkbox,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import CustomSingleInputDateRangeField from './CustomSingleInputDateRangeField';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import Autocomplete from "@mui/material/Autocomplete";
+import dayjs from 'dayjs';
+import cities from './cities.json';
 
 export default function FormCustom() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const [budget, setBudget] = useState<number>(0);
-    const handleBudgetChange = (_: Event, newValue: number | number[]) => {
-        setBudget(newValue as number);
-    };
     const [selectedPlace, setSelectedPlace] = useState<string>("domestic");
     const handleCheckboxChange = (value: string) => {
         setSelectedPlace(value);
     };
+    const [value, setValue] = useState<any>([
+        dayjs('01/01/2024', 'DD/MM/YYYY'),
+        dayjs('31/12/2024', 'DD/MM/YYYY')
+    ]);
 
     return (
         <Box>
@@ -34,7 +39,7 @@ export default function FormCustom() {
                 <Grid item xs={12} md="auto" sx={{ zIndex: 100 }}>
                     <Box
                         sx={{
-                            backgroundColor: "#FFFAC4",
+                            backgroundColor: "#FFF698",
                             paddingTop: "16px",
                             paddingBottom: "16px",
                             paddingLeft: {
@@ -63,7 +68,7 @@ export default function FormCustom() {
                                 xs: "20px",
                             }
                         }}>
-                            Get your lucky trip in 1 tap!
+                            EXPLORE YOUR LUCKY TRIP
                         </Typography>
                     </Box>
                 </Grid>
@@ -79,7 +84,7 @@ export default function FormCustom() {
                             <Box sx={{
                                 height: "23px",
                                 width: "23px",
-                                backgroundColor: "#FFFBCC",
+                                backgroundColor: "#FFF698",
                                 clipPath: "path('M 0 23 L 0 0 L 23 0 A 23 23 0 0 0 0 23 Z')",
                                 transform: "scaleY(-1)",
                             }}>
@@ -112,10 +117,7 @@ export default function FormCustom() {
                 <Grid container
                     spacing={3}
                     sx={{
-                        paddingBottom: {
-                            md: "24px",
-                            xs: "16px",
-                        },
+                        paddingBottom: "24px",
                         paddingLeft: {
                             md: "32px",
                             xs: "16px",
@@ -153,6 +155,18 @@ export default function FormCustom() {
                                 const input = e.target as HTMLInputElement;
                                 input.value = input.value.replace(/[^0-9]/g, "");
                             }}
+                        />
+                    </Grid>
+                    <Grid item xs={6} md={2.4}>
+                        <TextField
+                            required
+                            id="email"
+                            label="Email"
+                            placeholder="Your email"
+                            variant="standard"
+                            InputLabelProps={{ shrink: true }}
+                            type="email"
+                            fullWidth
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
@@ -219,7 +233,7 @@ export default function FormCustom() {
                             />
                         </LocalizationProvider>
                     </Grid>
-                    <Grid item xs={12} md={2.4}>
+                    <Grid item xs={6} md={2.4}>
                         <TextField
                             required
                             id="place-of-birth"
@@ -230,24 +244,7 @@ export default function FormCustom() {
                             fullWidth
                         />
                     </Grid>
-                </Grid>
-                <Grid container
-                    spacing={3}
-                    sx={{
-                        paddingBottom: {
-                            md: "24px",
-                            xs: "16px",
-                        },
-                        paddingLeft: {
-                            md: "32px",
-                            xs: "16px",
-                        },
-                        paddingRight: {
-                            md: "32px",
-                            xs: "16px",
-                        },
-                    }}>
-                    <Grid item xs={12} md={2.4}>
+                    <Grid item xs={6} md={2.4}>
                         <Typography sx={{
                             fontSize: {
                                 md: "14px",
@@ -259,7 +256,7 @@ export default function FormCustom() {
                             You want to travel
                         </Typography>
                         <Grid container>
-                            <Grid item md={12} xs={6}>
+                            <Grid item md={12} xs={12}>
                                 <Box sx={{
                                     display: 'flex',
                                     alignItems: 'center'
@@ -319,7 +316,7 @@ export default function FormCustom() {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs={12} md={4.8}>
+                    <Grid item xs={6} md={2.4}>
                         <Typography sx={{
                             fontSize: {
                                 md: "14px",
@@ -328,134 +325,154 @@ export default function FormCustom() {
                             fontWeight: "bold",
                             marginBottom: "12px",
                         }}>
-                            Time you want to travel
+                            You are traveling from
                         </Typography>
-                        <Grid container spacing={3}>
-                            <Grid item xs={6} md={6}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker
-                                        format="DD/MM/YYYY"
-                                        slotProps={{
-                                            textField: {
-                                                required: true,
-                                                placeholder: "dd/mm/yyyy",
-                                                variant: "standard",
-                                                InputLabelProps: {
-                                                    shrink: true,
-                                                },
-                                                InputProps: {
-                                                    sx: {
-                                                        borderRadius: 2.5,
-                                                        height: "40px",
-                                                        placeholder: "dd/mm/yyyy",
-                                                        "& .MuiSvgIcon-root": { display: 'none' }
-                                                    },
-                                                },
-                                                sx: {
-                                                    height: "40px",
-                                                    width: "100%",
-                                                    placeholder: "dd/mm/yyyy",
-                                                },
-                                                fullWidth: true,
-                                                label: "Depart date"
-                                            },
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid item xs={6} md={6}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker
-                                        format="DD/MM/YYYY"
-                                        slotProps={{
-                                            textField: {
-                                                required: true,
-                                                placeholder: "dd/mm/yyyy",
-                                                variant: "standard",
-                                                InputLabelProps: {
-                                                    shrink: true,
-                                                },
-                                                InputProps: {
-                                                    sx: {
-                                                        borderRadius: 2.5,
-                                                        height: "40px",
-                                                        placeholder: "dd/mm/yyyy",
-                                                        "& .MuiSvgIcon-root": { display: 'none' }
-                                                    },
-                                                },
-                                                sx: {
-                                                    height: "40px",
-                                                    width: "100%",
-                                                    placeholder: "dd/mm/yyyy",
-                                                },
-                                                fullWidth: true,
-                                                label: "Return date"
-                                            },
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12} md={4.8}>
-                        <Typography sx={{
-                            fontSize: {
-                                md: "14px",
-                                xs: "13px",
-                            },
-                            fontWeight: "bold",
-                            marginBottom: "12px",
-                        }}>
-                            Your budget
-                        </Typography>
-                        <Box sx={{ width: "100%", position: "relative", mt: 5.2 }}>
-                            <Box
-                                sx={{
-                                    position: "absolute",
-                                    left: `${(budget / 1000) * 100}%`,
-                                    transform: "translateX(-50%)",
-                                    top: "-30px",
-                                    backgroundColor: "#FFEB3B",
-                                    color: "black",
-                                    fontWeight: "bold",
-                                    padding: "5px 10px",
-                                    borderRadius: "5px",
-                                    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                    fontSize: {
-                                        md: "16px",
-                                        xs: "14px",
-                                    },
-                                }}
-                            >
-                                {budget}
-                            </Box>
-                            <Slider
-                                value={budget}
-                                min={0}
-                                max={1000}
-                                onChange={handleBudgetChange}
-                                sx={{
-                                    color: "#FFEB3B",
-                                    height: 8,
-                                    '& .MuiSlider-thumb': {
-                                        height: 16,
-                                        width: 16,
-                                        backgroundColor: "#FFEB3B",
-                                        boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                        '&:hover': {
-                                            boxShadow: "0 3px 8px rgba(0,0,0,0.3)",
+                        <Autocomplete
+                            size={"small"}
+                            popupIcon={
+                                <img
+                                    src="/page1/ic_down.svg"
+                                    alt="icon"
+                                    style={{
+                                        width: 18,
+                                    }}
+                                />
+                            }
+                            options={cities}
+                            autoHighlight
+                            getOptionLabel={(option) => option.name}
+                            renderOption={(props, option) => {
+                                const { key, ...optionProps } = props;
+                                return (
+                                    <Box
+                                        key={key}
+                                        component="li"
+                                        sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                                        {...optionProps}
+                                    >
+                                        {option.name}
+                                    </Box>
+                                );
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Where from"
+                                    placeholder="Select a city"
+                                    required
+                                    variant="standard"
+                                    sx={{
+                                        "& .MuiInputBase-root": {
+                                            borderRadius: 2.5,
                                         },
-                                    },
-                                    '& .MuiSlider-track': {
-                                        border: "none",
-                                    },
-                                    '& .MuiSlider-rail': {
-                                        opacity: 0.4,
-                                        backgroundColor: "#D3D3D3",
-                                    },
-                                }}
-                            />
-                        </Box>
+                                        marginTop: "12px",
+                                    }}
+                                    InputLabelProps={{
+                                        shrink: true, 
+                                    }}
+                                />
+                            )}
+                            sx={{
+                                "& .MuiAutocomplete-popupIndicator": {
+                                    position: "relative",
+                                    right: "12px",
+                                    zIndex: 1,
+                                },
+                                "& .MuiAutocomplete-endAdornment": {
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "16px",
+                                },
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={6} md={2.4}>
+                        <Typography sx={{
+                            fontSize: {
+                                md: "14px",
+                                xs: "13px",
+                            },
+                            fontWeight: "bold",
+                            marginBottom: "12px",
+                        }}>
+                            You are traveling from
+                        </Typography>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DemoContainer components={['CustomSingleInputDateRangeField']}>
+                                <CustomSingleInputDateRangeField value={value}
+                                    onChange={(newValue: any) => setValue(newValue)} />
+                            </DemoContainer>
+                        </LocalizationProvider>
+                    </Grid>
+                    <Grid item xs={6} md={2.4}>
+                        <Typography sx={{
+                            fontSize: {
+                                md: "14px",
+                                xs: "13px",
+                            },
+                            fontWeight: "bold",
+                            marginBottom: "12px",
+                        }}>
+                            Your desired destination
+                        </Typography>
+                        <Autocomplete
+                            size={"small"}
+                            popupIcon={
+                                <img
+                                    src="/page1/ic_down.svg"
+                                    alt="icon"
+                                    style={{
+                                        width: 18,
+                                    }}
+                                />
+                            }
+                            options={cities}
+                            autoHighlight
+                            getOptionLabel={(option) => option.name}
+                            renderOption={(props, option) => {
+                                const { key, ...optionProps } = props;
+                                return (
+                                    <Box
+                                        key={key}
+                                        component="li"
+                                        sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                                        {...optionProps}
+                                    >
+                                        {option.name}
+                                    </Box>
+                                );
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Where to"
+                                    placeholder="Select a city"
+                                    required
+                                    variant="standard"
+                                    sx={{
+                                        "& .MuiInputBase-root": {
+                                            borderRadius: 2.5,
+                                        },
+                                        marginTop: "12px",
+                                    }}
+                                    InputLabelProps={{
+                                        shrink: true, 
+                                    }}
+                                />
+                            )}
+                            sx={{
+                                "& .MuiAutocomplete-popupIndicator": {
+                                    position: "relative",
+                                    right: "12px",
+                                    zIndex: 1,
+                                },
+                                "& .MuiAutocomplete-endAdornment": {
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "16px",
+                                },
+                            }}
+                        />
                     </Grid>
                 </Grid>
                 <Button
@@ -491,7 +508,7 @@ export default function FormCustom() {
                         },
                     }}
                 >
-                    Explore your luck here!
+                    EXPLORE NOW
                 </Button>
             </Box>
         </Box>

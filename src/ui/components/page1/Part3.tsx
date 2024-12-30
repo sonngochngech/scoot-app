@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Button, useMediaQuery } from "@mui/material";
+import { Box, Grid, Button, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 export default function Part3() {
@@ -19,6 +19,10 @@ export default function Part3() {
                     md: "70px",
                     xs: "38px",
                 },
+                marginBottom: {
+                    md: "109px",
+                    xs: "51px",
+                }
             }}>
             <Box
                 sx={{
@@ -26,46 +30,20 @@ export default function Part3() {
                         md: "32px",
                         xs: "16px",
                     },
-                    height: "100%",
                     width: "100%",
                     overflow: "hidden",
                     position: "relative",
                     backgroundImage: {
-                        md: `url('/page1/bg_p3.svg')`,
-                        xs: `url('/page1/bg_p3_small.svg')`
+                        md: `url('/page1/bg_p3.png')`,
+                        xs: `url('/page1/bg_p3_small.png')`
                     },
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
-                    backgroundPosition: "center",
+                    backgroundPosition: "left center",
                 }}
             >
                 <Grid container>
                     <Grid item md={6.6} xs={12}>
-                        <Typography sx={{
-                            fontSize: {
-                                md: "24px",
-                                xs: "20px",
-                            },
-                            color: "#FFE900",
-                            marginTop: {
-                                md: "9%",
-                                xs: "9%",
-                            },
-                            marginBottom: {
-                                md: "9%",
-                                xs: "5%",
-                            },
-                            marginLeft: {
-                                md: "56px",
-                                xs: "32px",
-                            },
-                            marginRight: {
-                                md: "56px",
-                                xs: "32px",
-                            },
-                        }}>
-                            When all aspects of life are in balance, you'll feel more harmonious and happy, allowing you to fully enjoy life to the fullest
-                        </Typography>
                     </Grid>
                     <Grid item md={0.9} xs={12} sx={{ marginBottom: { xs: "31px" } }}>
                         <Box sx={{
@@ -103,6 +81,14 @@ export default function Part3() {
                             paddingRight: {
                                 xs: "32px",
                             },
+                            paddingTop: {
+                                md: "22%",
+                                xs: 0,
+                            },
+                            paddingBottom: {
+                                md: "22%",
+                                xs: 0,
+                            },
                         }}>
                             <Button
                                 onClick={() => {
@@ -118,7 +104,10 @@ export default function Part3() {
                                         backgroundColor: "#f0f0f0",
                                     },
                                     border: "1px solid black",
-                                    borderRadius: "12px",
+                                    borderRadius: {
+                                        md: "99px",
+                                        xs: "115px",
+                                    },
                                     paddingTop: {
                                         md: "20px",
                                         xs: "18px",
@@ -137,7 +126,7 @@ export default function Part3() {
                                     maxWidth: { md: "264px" },
                                 }}
                             >
-                                Explore your luck
+                                GET STARTED
                             </Button>
                         </Box>
                     </Grid>
