@@ -3,13 +3,12 @@ import {
     TextField,
     Typography,
     FormControlLabel,
-    Slider,
     Button,
     Grid,
     useMediaQuery,
     Checkbox,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -18,20 +17,106 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import CustomSingleInputDateRangeField from './CustomSingleInputDateRangeField';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Autocomplete from "@mui/material/Autocomplete";
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import cities from './cities.json';
 
+interface FormState {
+    name: string;
+    phone: string;
+    email: string;
+    dateOfBirth: Dayjs | null;
+    timeOfBirth: Dayjs | null;
+    placeOfBirth: string;
+    placeTravel: string;
+    travelingFrom: { name: string; code: string } | null;
+    timeRange: [Dayjs | null, Dayjs | null];
+    desiredDestination: { name: string; code: string } | null;
+}
+
+const getInitialState = (): FormState => {
+    try {
+        const storedState = localStorage.getItem('formState');
+        if (storedState) {
+            const parsedState = JSON.parse(storedState);
+            return {
+                name: parsedState.name || '',
+                phone: parsedState.phone || '',
+                email: parsedState.email || '',
+                dateOfBirth: parsedState.dateOfBirth ? dayjs(parsedState.dateOfBirth) : null,
+                timeOfBirth: parsedState.timeOfBirth ? dayjs(parsedState.timeOfBirth) : null,
+                placeOfBirth: parsedState.placeOfBirth || '',
+                placeTravel: parsedState.placeTravel || '',
+                travelingFrom: parsedState.travelingFrom && parsedState.travelingFrom.name && parsedState.travelingFrom.code
+                    ? { name: parsedState.travelingFrom.name, code: parsedState.travelingFrom.code }
+                    : null,
+                timeRange: [
+                    parsedState.timeRange?.[0] ? dayjs(parsedState.timeRange[0]) : null,
+                    parsedState.timeRange?.[1] ? dayjs(parsedState.timeRange[1]) : null,
+                ],
+                desiredDestination: parsedState.desiredDestination && parsedState.desiredDestination.name && parsedState.desiredDestination.code
+                    ? { name: parsedState.desiredDestination.name, code: parsedState.desiredDestination.code }
+                    : null,
+            };
+        }
+    } catch {
+        return {
+            name: '',
+            phone: '',
+            email: '',
+            dateOfBirth: null,
+            timeOfBirth: null,
+            placeOfBirth: '',
+            placeTravel: '',
+            travelingFrom: null,
+            timeRange: [null, null],
+            desiredDestination: null,
+        };
+    }
+    return {
+        name: '',
+        phone: '',
+        email: '',
+        dateOfBirth: null,
+        timeOfBirth: null,
+        placeOfBirth: '',
+        placeTravel: '',
+        travelingFrom: null,
+        timeRange: [null, null],
+        desiredDestination: null,
+    };
+};
+
 export default function FormCustom() {
+    const [formState, setFormState] = useState<FormState>(getInitialState);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(
+                'formState',
+                JSON.stringify({
+                    ...formState,
+                    dateOfBirth: formState.dateOfBirth?.format('YYYY-MM-DD') || null,
+                    timeOfBirth: formState.timeOfBirth?.format('HH:mm') || null,
+                    timeRange: [
+                        formState.timeRange[0]?.format('YYYY-MM-DD') || null,
+                        formState.timeRange[1]?.format('YYYY-MM-DD') || null,
+                    ],
+                })
+            );
+        } catch {
+
+        }
+    }, [formState]);
+
+    const handleInputChange = (field: keyof FormState, value: any) => {
+        setFormState((prevState) => ({
+            ...prevState,
+            [field]: value,
+        }));
+    };
+
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const [selectedPlace, setSelectedPlace] = useState<string>("domestic");
-    const handleCheckboxChange = (value: string) => {
-        setSelectedPlace(value);
-    };
-    const [value, setValue] = useState<any>([
-        dayjs('01/01/2024', 'DD/MM/YYYY'),
-        dayjs('31/12/2024', 'DD/MM/YYYY')
-    ]);
 
     return (
         <Box>
@@ -136,6 +221,8 @@ export default function FormCustom() {
                             variant="standard"
                             InputLabelProps={{ shrink: true }}
                             fullWidth
+                            value={formState.name}
+                            onChange={(e) => handleInputChange('name', e.target.value)}
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
@@ -145,6 +232,8 @@ export default function FormCustom() {
                             label="Phone"
                             placeholder="Your phone"
                             variant="standard"
+                            value={formState.phone}
+                            onChange={(e) => handleInputChange('phone', e.target.value)}
                             InputLabelProps={{ shrink: true }}
                             fullWidth
                             inputProps={{
@@ -167,11 +256,15 @@ export default function FormCustom() {
                             InputLabelProps={{ shrink: true }}
                             type="email"
                             fullWidth
+                            value={formState.email}
+                            onChange={(e) => handleInputChange('email', e.target.value)}
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
+                                value={formState.dateOfBirth}
+                                onChange={(newValue) => handleInputChange('dateOfBirth', newValue)}
                                 format="DD/MM/YYYY"
                                 slotProps={{
                                     textField: {
@@ -204,6 +297,8 @@ export default function FormCustom() {
                     <Grid item xs={6} md={2.4}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <TimePicker
+                                value={formState.timeOfBirth}
+                                onChange={(newValue) => handleInputChange('timeOfBirth', newValue)}
                                 format="HH:mm"
                                 slotProps={{
                                     textField: {
@@ -242,6 +337,8 @@ export default function FormCustom() {
                             variant="standard"
                             InputLabelProps={{ shrink: true }}
                             fullWidth
+                            value={formState.placeOfBirth}
+                            onChange={(e) => handleInputChange('placeOfBirth', e.target.value)}
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
@@ -264,8 +361,8 @@ export default function FormCustom() {
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                checked={selectedPlace === 'domestic'}
-                                                onChange={() => handleCheckboxChange('domestic')}
+                                                checked={formState.placeTravel === 'domestic'}
+                                                onChange={() => handleInputChange('placeTravel', 'domestic')}
                                                 sx={{
                                                     '& .MuiSvgIcon-root': {
                                                         width: 20,
@@ -293,8 +390,8 @@ export default function FormCustom() {
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                checked={selectedPlace === 'abroad'}
-                                                onChange={() => handleCheckboxChange('abroad')}
+                                                checked={formState.placeTravel === 'abroad'}
+                                                onChange={() => handleInputChange('placeTravel', 'abroad')}
                                                 sx={{
                                                     '& .MuiSvgIcon-root': {
                                                         width: 20,
@@ -328,6 +425,8 @@ export default function FormCustom() {
                             You are traveling from
                         </Typography>
                         <Autocomplete
+                            value={formState.travelingFrom || null}
+                            onChange={(e, value) => handleInputChange('travelingFrom', value)}
                             size={"small"}
                             popupIcon={
                                 <img
@@ -368,7 +467,7 @@ export default function FormCustom() {
                                         marginTop: "12px",
                                     }}
                                     InputLabelProps={{
-                                        shrink: true, 
+                                        shrink: true,
                                     }}
                                 />
                             )}
@@ -395,12 +494,21 @@ export default function FormCustom() {
                             fontWeight: "bold",
                             marginBottom: "12px",
                         }}>
-                            You are traveling from
+                            Time you want to travel
                         </Typography>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['CustomSingleInputDateRangeField']}>
-                                <CustomSingleInputDateRangeField value={value}
-                                    onChange={(newValue: any) => setValue(newValue)} />
+                                <CustomSingleInputDateRangeField
+                                    value={[
+                                        formState.timeRange[0] || null,
+                                        formState.timeRange[1] || null,
+                                    ]}
+                                    onChange={(newValue: [Dayjs | null, Dayjs | null]) => {
+                                        handleInputChange('timeRange', [
+                                            newValue[0] || null,
+                                            newValue[1] || null,
+                                        ]);
+                                    }} />
                             </DemoContainer>
                         </LocalizationProvider>
                     </Grid>
@@ -416,6 +524,8 @@ export default function FormCustom() {
                             Your desired destination
                         </Typography>
                         <Autocomplete
+                            value={formState.desiredDestination || null}
+                            onChange={(e, value) => handleInputChange('desiredDestination', value)}
                             size={"small"}
                             popupIcon={
                                 <img
@@ -456,7 +566,7 @@ export default function FormCustom() {
                                         marginTop: "12px",
                                     }}
                                     InputLabelProps={{
-                                        shrink: true, 
+                                        shrink: true,
                                     }}
                                 />
                             )}
