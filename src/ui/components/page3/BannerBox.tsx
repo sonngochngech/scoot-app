@@ -5,7 +5,7 @@ import { Container, Typography, useMediaQuery ,useTheme} from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const BannerBox = ({city,duration}) => {
+const BannerBox = ({city,duration}:any) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     return (

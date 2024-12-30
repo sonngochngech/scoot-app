@@ -1,0 +1,1 @@
+export const  errorMessage="Xin lỗi vì sự bất tiện này , xin vui lòng thử lại sau"

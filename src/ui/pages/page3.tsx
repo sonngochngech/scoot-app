@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import './styles.css';
-import './styles-mobile.css';
+// import './styles.css';
+// import './styles-mobile.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
@@ -20,6 +20,13 @@ import LocationImageList from '../components/page3/LocationImageList';
 
 
 import { useNavigate } from 'react-router-dom';
+import FengShuiFlight from '../components/page3/FengShuiFlight';
+import Tips from '../components/page3/Tips';
+import Experience from '../components/page3/Experience';
+import Inspiration from '../components/page3/Inspiration';
+import Itinerary from '../components/page3/Itinerary';
+import TripButtonGroup from '../components/page3/TripButtonGroup';
+import Location from '../components/page3/Location';
 
 function calculateDuration(startDate: any, endDate:any) {
 
@@ -73,6 +80,60 @@ const Page3 = () => {
 
     // ************** Data ******************************** 
 
+
+    const itineraries={
+        "itineraries": [
+            {
+                "realDay": "Day 1",
+                "day": "Day 1",
+                "date": "2023-04-01",
+                "location": "Santorini",
+                "activities": [
+                    {
+                        "activity": "Arrive in Santorini",
+                        "img":["/page3/activity-item.png"],
+                        "description": "Arrive in Santorini and check in at your hotel. Enjoy a leisurely lunch and explore the local"},
+                    {
+                        "activity": "Arrive in Santorini",
+                        "img":["/page3/activity-item.png"],
+                        "description": "Arrive in Santorini and check in at your hotel. Enjoy a leisurely lunch and explore the local"},
+
+
+                ]
+             }
+            ]
+        }
+
+
+    const data={
+        location:[
+            {
+                name:'Santorini',
+                description:'Santorini is the supermodel of the Greek islands, a head-turner whose face is instantly recognisable around the world: multicoloured cliffs soar out of a sea-drowned caldera, topped by drifts of whitewashed buildings. With its reputation for dazzling panoramas, romantic sunsets and volcanic-sand beaches, it’s hardly surprising the island features on so many travellers’ bucket lists.',
+                address:'Thira 847 00, Greece',
+            },
+            {
+                name:'Santorini',
+                description:'Santorini is the supermodel of the Greek islands, a head-turner whose face is instantly recognisable around the world: multicoloured cliffs soar out of a sea-drowned caldera, topped by drifts of whitewashed buildings. With its reputation for dazzling panoramas, romantic sunsets and volcanic-sand beaches, it’s hardly surprising the island features on so many travellers’ bucket lists.',
+                address:'Thira 847 00, Greece',
+            },
+            {
+                name:'Santorini',
+                description:'Santorini is the supermodel of the Greek islands, a head-turner whose face is instantly recognisable around the world: multicoloured cliffs soar out of a sea-drowned caldera, topped by drifts of whitewashed buildings. With its reputation for dazzling panoramas, romantic sunsets and volcanic-sand beaches, it’s hardly surprising the island features on so many travellers’ bucket lists.',
+                address:'Thira 847 00, Greece',
+            },
+        ],
+        img:[
+            ['/page3/location-item.png'],
+            ['/page3/location-item.png'],
+            ['/page3/location-item.png']
+        ]
+           
+            
+
+        
+    }
+
     
 
     
@@ -85,7 +146,7 @@ const Page3 = () => {
         <Box sx={{ position: 'relative' }} >
             <BgBanner isMobile={isMobile} />
             <Box className='d-flex justify-content-left align-items-center' sx={{position:'absolute', top: '64px',left:'64px',zIndex:3}}>
-                <img src="img/back-arrow.svg"
+                <img src="/page3/back-arrow.svg"
                     
                     onClick={() =>  navigate('-1')}
                     style={{ cursor: 'pointer', marginRight: '8px',
@@ -107,14 +168,22 @@ const Page3 = () => {
                     <BannerBox  city={null} duration={null}></BannerBox>
                 </Box>
                  <Box  sx={box3Style}>
-                  <LocationImageList isMobile={isMobile} city={location}  />
+                  <LocationImageList isMobile={isMobile} city={null}  />
                  </Box>
                 
                 <Stack sx={{ ...box1Style }} spacing={8} >
                     <Rating rating={null} />
                     <BdBreakdown isMobile={isMobile} budget={null} />
-                 
+                    <FengShuiFlight isMobile={isMobile} />
+                    <Tips></Tips>
+                    <Location isMobile={isMobile} itemData={data.location} itemImage={data.img} title={'Santorini'} />
+                    <Experience/>
+                    <Inspiration/>
+                    <Itinerary itineraries={itineraries.itineraries}  />
+                    <TripButtonGroup/>
+                   
                 </Stack>
+
           
             </Box>
         </Box>
