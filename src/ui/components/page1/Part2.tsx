@@ -1,4 +1,4 @@
-import { Box, Typography, Card, CardContent, Grid, useMediaQuery } from "@mui/material";
+import { Box, Typography, Card, CardContent, Grid, Button, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -9,33 +9,21 @@ export default function Part2() {
     const cards = [
         {
             img: "/page1/ic_p2_1.svg",
-            title: "Boost Your Energy",
+            title: "Planning a vacation",
             description:
-                "Traveling to destinations that align with your personal Feng Shui elements can help rejuvenate your energy, leaving fatigue and illness behind.",
+                "Say goodbye to worries about budget, safety, or navigating an unfamiliar destination. This tool offers reliable travel choices and helps you avoid unnecessary expenses, providing comprehensive guidance for a stress-free and enjoyable getaway.",
         },
         {
             img: "/page1/ic_p2_2.svg",
-            title: "Spiritual & Emotional Healing",
+            title: "Planning a business trip",
             description:
-                'Certain locations with strong positive energy can aid in emotional and spiritual healing, helping you release past traumas and embrace a more balanced, peaceful state of mind.',
+                "Maximize your efficiency with time-saving travel tips and recommendations tailored to your business goals. This tool ensures a productive trip while leaving room for leisure activities to unwind and recharge.",
         },
         {
             img: "/page1/ic_p2_3.svg",
-            title: "Stress Reduction",
+            title: "Planning a trip with family or friends",
             description:
-                "Embrace a FRESH, BALANCED and POSITIVE vibe when traveling. Create a more peaceful and relaxing environment, reducing stress and promoting a sense of calm.",
-        },
-        {
-            img: "/page1/ic_p2_4.svg",
-            title: "Increase Luck & Prosperity",
-            description:
-                "Traveling to places aligned with your birth elements will boost your energy, attracting luck and unexpected opportunities in life. We use Bazi, known as Four Pillars of Destiny or Chinese astrology. ",
-        },
-        {
-            img: "/page1/ic_p2_5.svg",
-            title: "Personal Growth & Clarity",
-            description:
-                "Feng Shui can help you choose destinations that support your personal and professional growth. The balanced energy of these places can foster creativity, clearer thinking, and better decision-making.",
+                "Find the perfect balance for everyone! This tool creates a harmonious travel plan that caters to the unique needs and preferences of each member of your group, ensuring a memorable experience for all.",
         },
     ];
 
@@ -55,42 +43,21 @@ export default function Part2() {
                     xs: "48px",
                 },
             }}>
+            <Typography
+                sx={{
+                    fontWeight: "bold",
+                    fontSize: {
+                        md: "40px",
+                        xs: "24px",
+                    },
+                    marginBottom: {
+                        md: "40px",
+                        xs: "24px",
+                    },
+                }}>
+                This tool is perfect for you if you are
+            </Typography>
             <Grid container spacing={2}>
-                <Grid item md={4} xs={12}>
-                    <Box
-                        component="img"
-                        src="/page1/ic_p2_fengshui.svg"
-                    />
-                    <Typography sx={{
-                        fontWeight: "bold",
-                        fontSize: {
-                            md: "40px",
-                            xs: "32px",
-                        },
-                        marginTop: "16px",
-                    }}>
-                        Travel with
-                    </Typography>
-                    <Typography sx={{
-                        fontWeight: "bold",
-                        fontSize: {
-                            md: "40px",
-                            xs: "32px",
-                        },
-                    }}>
-                        Feng Shui
-                    </Typography>
-                    <Typography sx={{
-                        color: "#DC437A",
-                        fontWeight: "bold",
-                        fontSize: {
-                            md: "40px",
-                            xs: "32px",
-                        },
-                    }}>
-                        Healing therapy?
-                    </Typography>
-                </Grid>
                 {!isMobile &&
                     cards.map((card, index) => (
                         <Grid item md={4}>
@@ -298,6 +265,53 @@ export default function Part2() {
                     </Swiper>
                 }
             </Grid>
+            <Box
+                sx={{
+                    padding: {
+                        md: "40px 0px 0px 0px",
+                        xs: "24px 0px 0px 0px",
+                    },
+                    width: "100%",
+                    position: "relative",
+                    display: "flex",
+                    justifyContent: "center",
+                }}
+            >
+                <Button
+                    onClick={() => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth",
+                        });
+                    }}
+                    sx={{
+                        backgroundColor: "#000",
+                        color: "#fff",
+                        padding: {
+                            md: "20px 0px 20px 0px",
+                            xs: "13px 0px 13px 0px",
+                        },
+                        fontSize: {
+                            md: "16px",
+                            xs: "14px",
+                        },
+                        textTransform: "uppercase",
+                        borderRadius: "99px",
+                        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                        "&:hover": {
+                            backgroundColor: "#333",
+                            transform: "scale(1.05)",
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+                        },
+                        width: {
+                            md: "264px",
+                            xs: "100%",
+                        },
+                    }}
+                >
+                    TRY NOW
+                </Button>
+            </Box>
         </Box>
     );
 }
