@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Grid, Typography, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
+import { useState } from "react";
+import { Slider, Box, Grid, Typography, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import BackIcon from "../components/page2/BackIcon";
@@ -19,6 +19,11 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export const Page2 = () => {
+    const [budget, setBudget] = useState<number>(0);
+    const handleBudgetChange = (_: Event, newValue: number | number[]) => {
+        setBudget(newValue as number);
+    };
+
     const data = {
         name: "Nguyễn Mai Anh",
         dateOfBirth: "08/08/2000",
@@ -524,110 +529,223 @@ export const Page2 = () => {
                                 >
                                     <Box
                                         sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            padding: {
-                                                md: '24px',
-                                                xs: '16px',
+                                            width: {
+                                                md: "600px",
+                                                xs: "343px",
                                             },
-                                        }}
-                                    >
-                                        <DialogTitle
-                                            sx={{
-                                                fontWeight: 'bold',
-                                                fontSize: {
-                                                    md: '28px',
-                                                    xs: '16px',
-                                                },
-                                                margin: 0,
-                                                padding: 0,
-                                            }}
-                                            id="customized-dialog-title"
-                                        >
-                                            Let us know your budget!
-                                        </DialogTitle>
-                                        <IconButton
-                                            aria-label="close"
-                                            onClick={handleClose}
-                                            sx={{
-                                                color: (theme) => theme.palette.grey[500],
-                                            }}
-                                        >
-                                            <CloseIcon />
-                                        </IconButton>
-                                    </Box>
+                                        }}>
 
-                                    <DialogContent dividers>
-                                        <Typography gutterBottom>
-                                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-                                            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-                                            consectetur ac, vestibulum at eros.
-                                        </Typography>
-                                        <Typography gutterBottom>
-                                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-                                            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
-                                        </Typography>
-                                        <Typography gutterBottom>
-                                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus
-                                            magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec
-                                            ullamcorper nulla non metus auctor fringilla.
-                                        </Typography>
-                                    </DialogContent>
-                                    <DialogActions>
                                         <Box
                                             sx={{
-                                                width: '100%',
-                                                padding: '24px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                padding: {
+                                                    md: '24px',
+                                                    xs: '16px',
+                                                },
                                             }}
                                         >
-                                            <Grid container spacing={"12px"}>
-                                                <Grid item xs={6}>
-                                                    <Button
-                                                        fullWidth
-                                                        sx={{
-                                                            backgroundColor: '#fff',
-                                                            color: '#000',
-                                                            borderRadius: '8px',
-                                                            padding: '8px 16px',
-                                                            textTransform: 'uppercase',
-                                                            fontWeight: 'bold',
-                                                            transition: 'transform 0.2s ease, background-color 0.2s ease',
-                                                            '&:hover': {
-                                                                backgroundColor: '#f0f0f0',
-                                                                transform: 'scale(1.05)',
-                                                            },
-                                                        }}
-                                                        onClick={handleClose}
-                                                    >
-                                                        Return
-                                                    </Button>
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <Button
-                                                        fullWidth
-                                                        sx={{
-                                                            backgroundColor: '#000',
-                                                            color: '#fff',
-                                                            borderRadius: '8px',
-                                                            padding: '8px 16px',
-                                                            textTransform: 'uppercase',
-                                                            fontWeight: 'bold',
-                                                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                                                            '&:hover': {
-                                                                backgroundColor: '#333',
-                                                                transform: 'scale(1.05)',
-                                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        View Trip Schedule
-                                                    </Button>
-                                                </Grid>
-                                            </Grid>
+                                            <DialogTitle
+                                                sx={{
+                                                    fontWeight: 'bold',
+                                                    fontSize: {
+                                                        md: '28px',
+                                                        xs: '16px',
+                                                    },
+                                                    margin: 0,
+                                                    padding: 0,
+                                                }}
+                                                id="customized-dialog-title"
+                                            >
+                                                Let us know your budget!
+                                            </DialogTitle>
+                                            <IconButton
+                                                aria-label="close"
+                                                onClick={handleClose}
+                                                sx={{
+                                                    color: (theme) => theme.palette.grey[500],
+                                                }}
+                                            >
+                                                <CloseIcon />
+                                            </IconButton>
                                         </Box>
-                                    </DialogActions>
-
+                                        <DialogContent dividers>
+                                            <Box sx={{ padding: "30px 12px 30px 12px" }}>
+                                                <Typography sx={{
+                                                    fontSize: {
+                                                        md: "14px",
+                                                        xs: "13px",
+                                                    },
+                                                    fontWeight: "bold",
+                                                    marginBottom: "16px",
+                                                }}>
+                                                    Your budget {"($/person"}{")"}
+                                                </Typography>
+                                                <Box sx={{ width: "100%", position: "relative", mt: 5.2 }}>
+                                                    <Box
+                                                        sx={{
+                                                            position: "absolute",
+                                                            left: `${(budget / 1000) * 100}%`,
+                                                            transform: "translateX(-50%)",
+                                                            top: "-30px",
+                                                            backgroundColor: "#FFEB3B",
+                                                            color: "black",
+                                                            fontWeight: "bold",
+                                                            padding: "5px 10px",
+                                                            borderRadius: "5px",
+                                                            boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                                                            fontSize: {
+                                                                md: "16px",
+                                                                xs: "14px",
+                                                            },
+                                                        }}
+                                                    >
+                                                        {budget}
+                                                    </Box>
+                                                    <Slider
+                                                        value={budget}
+                                                        min={0}
+                                                        max={1000}
+                                                        onChange={handleBudgetChange}
+                                                        sx={{
+                                                            color: "#FFEB3B",
+                                                            height: 8,
+                                                            '& .MuiSlider-thumb': {
+                                                                height: 16,
+                                                                width: 16,
+                                                                backgroundColor: "#FFEB3B",
+                                                                boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                                                                '&:hover': {
+                                                                    boxShadow: "0 3px 8px rgba(0,0,0,0.3)",
+                                                                },
+                                                            },
+                                                            '& .MuiSlider-track': {
+                                                                border: "none",
+                                                            },
+                                                            '& .MuiSlider-rail': {
+                                                                opacity: 0.4,
+                                                                backgroundColor: "#D3D3D3",
+                                                            },
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Box
+                                                sx={{
+                                                    width: '100%',
+                                                    padding: '24px',
+                                                }}
+                                            >
+                                                {!isMobile &&
+                                                    <Grid container spacing={"12px"}>
+                                                        <Grid item xs={12} md={6}>
+                                                            <Button
+                                                                fullWidth
+                                                                sx={{
+                                                                    backgroundColor: '#fff',
+                                                                    color: '#000',
+                                                                    borderRadius: '99px',
+                                                                    padding: '20px 0px',
+                                                                    textTransform: 'uppercase',
+                                                                    transition: 'transform 0.2s ease, background-color 0.2s ease',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#f0f0f0',
+                                                                        transform: 'scale(1.05)',
+                                                                    },
+                                                                    fontSize: {
+                                                                        md: "16px",
+                                                                        xs: "14px",
+                                                                    },
+                                                                }}
+                                                                onClick={handleClose}
+                                                            >
+                                                                Return
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid item xs={12} md={6}>
+                                                            <Button
+                                                                fullWidth
+                                                                sx={{
+                                                                    backgroundColor: '#000',
+                                                                    color: '#fff',
+                                                                    borderRadius: '99px',
+                                                                    padding: '20px 0px',
+                                                                    textTransform: 'uppercase',
+                                                                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#333',
+                                                                        transform: 'scale(1.05)',
+                                                                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                                                                    },
+                                                                    fontSize: {
+                                                                        md: "16px",
+                                                                        xs: "14px",
+                                                                    },
+                                                                }}
+                                                            >
+                                                                View Trip Schedule
+                                                            </Button>
+                                                        </Grid>
+                                                    </Grid>
+                                                }
+                                                {isMobile &&
+                                                    <Grid container spacing={"12px"}>
+                                                        <Grid item xs={12} md={6}>
+                                                            <Button
+                                                                fullWidth
+                                                                sx={{
+                                                                    backgroundColor: '#000',
+                                                                    color: '#fff',
+                                                                    borderRadius: '99px',
+                                                                    padding: '20px 0px',
+                                                                    textTransform: 'uppercase',
+                                                                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#333',
+                                                                        transform: 'scale(1.05)',
+                                                                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                                                                    },
+                                                                    fontSize: {
+                                                                        md: "16px",
+                                                                        xs: "14px",
+                                                                    },
+                                                                }}
+                                                            >
+                                                                View Trip Schedule
+                                                            </Button>
+                                                        </Grid>
+                                                        <Grid item xs={12} md={6}>
+                                                            <Button
+                                                                fullWidth
+                                                                sx={{
+                                                                    backgroundColor: '#fff',
+                                                                    color: '#000',
+                                                                    borderRadius: '99px',
+                                                                    padding: '20px 0px',
+                                                                    textTransform: 'uppercase',
+                                                                    transition: 'transform 0.2s ease, background-color 0.2s ease',
+                                                                    '&:hover': {
+                                                                        backgroundColor: '#f0f0f0',
+                                                                        transform: 'scale(1.05)',
+                                                                    },
+                                                                    fontSize: {
+                                                                        md: "16px",
+                                                                        xs: "14px",
+                                                                    },
+                                                                }}
+                                                                onClick={handleClose}
+                                                            >
+                                                                Return
+                                                            </Button>
+                                                        </Grid>
+                                                    </Grid>
+                                                }
+                                            </Box>
+                                        </DialogActions>
+                                    </Box>
                                 </BootstrapDialog>
                             </Box>
                         </Box>
