@@ -1,8 +1,22 @@
-import { Box, Grid, Typography, Card, Button, useMediaQuery } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Grid, Typography, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { Swiper, SwiperSlide } from "swiper/react";
+import CloseIcon from "@mui/icons-material/Close";
 import BackIcon from "../components/page2/BackIcon";
 import "swiper/css";
+import { styled } from '@mui/material/styles';
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+    '& .MuiPaper-root': {
+        borderRadius: '24px',
+    },
+}));
 
 export const Page2 = () => {
     const data = {
@@ -43,6 +57,9 @@ export const Page2 = () => {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     return (
         <Box>
@@ -495,9 +512,123 @@ export const Page2 = () => {
                                             xs: "100%",
                                         },
                                     }}
+                                    onClick={handleOpen}
                                 >
                                     I WANT TO KNOW MORE
                                 </Button>
+
+                                <BootstrapDialog
+                                    onClose={handleClose}
+                                    aria-labelledby="customized-dialog-title"
+                                    open={open}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            padding: {
+                                                md: '24px',
+                                                xs: '16px',
+                                            },
+                                        }}
+                                    >
+                                        <DialogTitle
+                                            sx={{
+                                                fontWeight: 'bold',
+                                                fontSize: {
+                                                    md: '28px',
+                                                    xs: '16px',
+                                                },
+                                                margin: 0,
+                                                padding: 0,
+                                            }}
+                                            id="customized-dialog-title"
+                                        >
+                                            Let us know your budget!
+                                        </DialogTitle>
+                                        <IconButton
+                                            aria-label="close"
+                                            onClick={handleClose}
+                                            sx={{
+                                                color: (theme) => theme.palette.grey[500],
+                                            }}
+                                        >
+                                            <CloseIcon />
+                                        </IconButton>
+                                    </Box>
+
+                                    <DialogContent dividers>
+                                        <Typography gutterBottom>
+                                            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
+                                            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
+                                            consectetur ac, vestibulum at eros.
+                                        </Typography>
+                                        <Typography gutterBottom>
+                                            Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+                                            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
+                                        </Typography>
+                                        <Typography gutterBottom>
+                                            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus
+                                            magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec
+                                            ullamcorper nulla non metus auctor fringilla.
+                                        </Typography>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Box
+                                            sx={{
+                                                width: '100%',
+                                                padding: '24px',
+                                            }}
+                                        >
+                                            <Grid container spacing={"12px"}>
+                                                <Grid item xs={6}>
+                                                    <Button
+                                                        fullWidth
+                                                        sx={{
+                                                            backgroundColor: '#fff',
+                                                            color: '#000',
+                                                            borderRadius: '8px',
+                                                            padding: '8px 16px',
+                                                            textTransform: 'uppercase',
+                                                            fontWeight: 'bold',
+                                                            transition: 'transform 0.2s ease, background-color 0.2s ease',
+                                                            '&:hover': {
+                                                                backgroundColor: '#f0f0f0',
+                                                                transform: 'scale(1.05)',
+                                                            },
+                                                        }}
+                                                        onClick={handleClose}
+                                                    >
+                                                        Return
+                                                    </Button>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Button
+                                                        fullWidth
+                                                        sx={{
+                                                            backgroundColor: '#000',
+                                                            color: '#fff',
+                                                            borderRadius: '8px',
+                                                            padding: '8px 16px',
+                                                            textTransform: 'uppercase',
+                                                            fontWeight: 'bold',
+                                                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                                            '&:hover': {
+                                                                backgroundColor: '#333',
+                                                                transform: 'scale(1.05)',
+                                                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                                                            },
+                                                        }}
+                                                    >
+                                                        View Trip Schedule
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Box>
+                                    </DialogActions>
+
+                                </BootstrapDialog>
                             </Box>
                         </Box>
                     </Box>
