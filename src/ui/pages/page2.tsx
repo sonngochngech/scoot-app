@@ -571,7 +571,7 @@ export const Page2 = () => {
                                             </IconButton>
                                         </Box>
                                         <DialogContent dividers>
-                                            <Box sx={{ padding: "30px 12px 30px 12px" }}>
+                                            <Box sx={{ padding: "30px 35px 30px 12px", overflow: "hidden", }} >
                                                 <Typography sx={{
                                                     fontSize: {
                                                         md: "14px",
