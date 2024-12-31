@@ -3,33 +3,33 @@ export interface UserInfoTypePayLoad{
         name: string;
         sex: number;
         phone: string;
-        birthdate: string|undefined;
-        placeOfBirth: string|undefined;
-        timeOfBirth: string|undefined;
+        birthdate: string|undefined|null;
+        placeOfBirth: string|undefined|null;
+        timeOfBirth: string|undefined|null;
 
     };
-    departureCity: string|undefined;
-    arrivalCity: string|undefined;
+    departureCity: string|undefined|null;
+    arrivalCity: string|undefined|null;
 
 } 
 
 export interface SavedUserInfo{
     userInfo:{
         name: string;
-        domestic: number;
+        sex: number;
         email: string;
         phone: string;
         birthdate: string;
-        placeOfBirth: CityType| null;
-        timeOfBirth: string| null;
+        placeOfBirth: CityType| undefined|null;
+        timeOfBirth: string| undefined|null;
     };
-    departureCity: CityType| null;
-    arrivalCity: CityType| null;
-    tripInfo: {
-        duration: number;
-        startDate: string;
+    departureCity: CityType|null|undefined;
+    arrivalCity: CityType|null|undefined;
+    tripInfo:{
+        duration:number;
+        startDate:  string;
         endDate: string;
-        departure: CityType| null;
+        departure: CityType|null|undefined;
     }
 }
 
@@ -43,8 +43,9 @@ export interface TripInfoTypePayLoad{
     endDate: string;
     duration: number;
     budget: number;  
-    departure: CityType;
-    arrival: CityType;
+    departure: CityType|null|undefined;
+    arrival: CityType|null|undefined;
     travelerQuantities: number;
-    arrivalImg: string,
+    arrivalImg: string[],
+    arrivalDescription?: string,
 }

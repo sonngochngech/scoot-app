@@ -1,66 +1,126 @@
-import React from "react";
+import { Box, Button, Card, Icon, IconButton } from '@mui/material';
 
-export default function LocationImageList({ isMobile ,city}) {
+import { Swiper, SwiperSlide,useSwiper  } from "swiper/react";
+import { LeftIcon, RightIcon } from './icons/icons';
+import { useRef, useState } from 'react';
+import { Swiper as SwiperType } from 'swiper/types';
+
+
+export default function LocationImageList({ isMobile ,imgs,description}:any) {
+   const swiper = useSwiper();
+   const swiperRef = useRef<SwiperType|null>();
+   const [activeIndex, setActiveIndex] = useState<number>(0);
+   const handleSlideChange = () => {
+    if (swiperRef.current) {
+      setActiveIndex(swiperRef.current.activeIndex); // Update active index when slide changes
+    }
+  };
+    return (
+        <Box sx={{
+            paddingTop: {
+                md: "32px",
+                xs: "16px",
+            },
+            paddingBottom: {
+                md: "32px",
+                xs: "16px",
+            },
+            position:'relative',
+        }}>
+            <Swiper
+                spaceBetween={12}
+                slidesPerView={1.2}
+                breakpoints={{
+                    900: { slidesPerView: 3 },
+                }}
+                onSwiper={(swiper:SwiperType) => {
+                    swiperRef.current = swiper;
+                  }}
+                  onSlideChange={handleSlideChange}
+                
+            >
+                {imgs?.map((img_link:any, img_idx:number) => (
+                    <SwiperSlide key={`${img_idx}`}
+                    >
+                        <Card
+
+                            sx={{
+                                position: "relative",
+                                overflow: "hidden",
+                                width:'100%',
+                                boxShadow: "none",
+                                border: "none",
+                            }}
+                        >
+                            <Card
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    overflow: "hidden",
+                                    width: "100%",
+                                    backgroundColor: "white",
+                                    boxShadow: "none",
+                                    border: "none",
+                                }}
+                            >
+                                <Box
+                                    component="div"
+                                    sx={{
+                                        position: "relative",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        paddingTop: "60%",
+                                        borderRadius: "16px",
+                                    }}
+                                >
+                                    <Box
+                                        component="img"
+                                        src={img_link}
+                                        sx={{
+                                            position: "absolute",
+                                            bottom: 0,
+                                            left: 0,
+                                            width: "100%",
+                                            height:img_idx === activeIndex ? '420px' : '275px',
+                                            objectFit: "cover",
+                                            borderRadius: "16px",
+                                        }}
+                                    />
+                                </Box>
+                            </Card>
+                        </Card>
+                    </SwiperSlide>
+                ))}
+            {!isMobile&& <IconButton  sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '0',
+                zIndex: 1,
+                width:'60px',
+                height:'60px',
+                
+            }}
+            onClick={() => swiperRef?.current?.slidePrev()}
+            >
+                <LeftIcon sx={{width:'100%',height:'100%'}}  />
+            </IconButton>}
+            {!isMobile&&<IconButton  sx={{
+                position: 'absolute',
+                top: '50%',
+                right: '0',
+                width: '60px',
+                height: '60px',
+                zIndex: 1,
+            }}
+            onClick={() => swiperRef?.current?.slideNext()}
+            >
+                <RightIcon sx={{width:'100%',height:'100%'}} />
+            </IconButton>  }
+            </Swiper>
+            
+        </Box>
+    )
 
    
-    return (
-        <>
-            <div key={city?.name} style={{ marginBottom: '48px' }}>
-                <div className="d-flex justify-content-between">
-                    {
-                        !isMobile ?
-                        
-                            <div id={`carouselExampleControls${city?.name?.replace(/[\s,]/g, "")}`} className="w-100 carousel slide d-flex " data-bs-ride="carousel" data-bs-touch="true">
-                                <div className="carousel-inner custom-carousel-inner">
-                                    {city?.image?.map((img, index) => (
-                                        <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                            <div className="d-flex align-items-end">
-                                                <img src={img} className="special-img" alt="Tourist on Boat"    
-                                                />
-                                                <img src={city?.image[(index + 1) % 10]} className="normal-img mr-16" alt="Tourist on Boat"      
-                                                />
-                                                <img src={city?.image[(index + 2) % 10]} className="normal-img" alt="Tourist on Boat"
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                    <div>
-                                        <button className="carousel-control-prev" type="button" data-bs-target={`#carouselExampleControls${city?.name.replace(/[\s,]/g, "")}`} data-bs-slide="prev" style={{ right: '0%' }}>
-                                            <img src="img/next-icon.svg" alt="Previous" className='controll-icon'/>
-                                        </button>
-                                        <button className="carousel-control-next" type="button" data-bs-target={`#carouselExampleControls${city?.name.replace(/[\s,]/g, "")}`} data-bs-slide="next">
-                                            <img src="img/previous-icon.svg" alt="Next" className='controll-icon' />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>         
-                            : 
-                            <div id={`carouselExampleControlsMobile${city?.name?.replace(/[\s,]/g, "")}`} className=" w-100 carousel slide d-flex" data-bs-ride="carousel" data-bs-touch="true">
-                                <div className="carousel-inner custom-carousel-inner">
-                                    {city?.image?.map((img, index) => (
-                                        <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                                            <div className="d-flex align-items-end">
-                                                <img src={img} className="normal-img me-2" alt="Phú Quốc Island"        
-                                                />
-                                                <img src={city.image[(index + 1) % 10]} className="normal-img" alt="Tourist on Boat" 
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                    <div>
-                                        <button className="carousel-control-prev" type="button" data-bs-target={`#carouselExampleControlsMobile${city?.name.replace(/[\s,]/g, "")}`} data-bs-slide="prev">
-                                            <img src="img/next-icon.svg" alt="Previous" className='carousel-control-prev-icon'/>
-                                        </button>
-                                        <button className="carousel-control-next" type="button" data-bs-target={`#carouselExampleControlsMobile${city?.name.replace(/[\s,]/g, "")}`} data-bs-slide="next">
-                                            <img src="img/previous-icon.svg" alt="Next" className='carousel-control-next-icon'  />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>    
-                    }
-                </div>
-                <p className="desktop-regular-20 col-12 col-sm-8" style={{ marginTop: '48px' }}>{city?.description}</p>
-            </div>
-        </>
-    )
+    
 }

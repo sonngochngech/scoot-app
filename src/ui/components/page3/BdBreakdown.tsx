@@ -2,9 +2,15 @@ import { Box, Button, Grid2, Typography } from "@mui/material";
 import { combineSlices } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 
+interface Budget {
+    price: number|null;
+    content: string|null;
+    title:string;
+    img: string;
 
+}
 
-export function BdBreakdown({isMobile,budget}) {
+export function BdBreakdown({isMobile,budget}:any) {
     const boxStyle={
         backgroundColor: 'black',
         borderRadius: '20px',
@@ -73,45 +79,57 @@ export function BdBreakdown({isMobile,budget}) {
         height:'64px',
         marginBottom:isMobile ? '16px':''
     }
-    const igData = [
+    const igData: Budget[] = [
         {
-            img: '/img/budget/budget1.svg',
+            img: '/page3/budget/budget1.svg',
             title: 'Flights',
+            content:'Round trip for 1 person',
+            price: 1000,
 
         },
         {
-            img: '/img/budget/budget2.svg',
+            img: '/page3/budget/budget2.svg',
             title: 'Transportation',
+            content:'Airport transfer, public transportation',
+            price: 200,
         },
         {
-            img: '/img/budget/budget3.svg',
+            img: '/page3/budget/budget3.svg',
             title: 'Activities',
+            content:'Museum, tours, etc',
+            price: 300,
 
         },
         {
-            img: '/img/budget/budget4.svg',
+            img: '/page3/budget/budget4.svg',
             title: 'Accommodation',
+            content:'Hotel, hostel, etc',
+            price: 400,
 
         },
         {
-            img: '/img/budget/budget5.svg',
+            img: '/page3/budget/budget5.svg',
             title: 'Food',
+            content:'Restaurant, grocery, etc',
+            price: 200,
         },
         {
-            img: '/img/budget/budget6.svg',
+            img: '/page3/budget/budget6.svg',
             title: 'Miscellaneous',
+            content:'Souvenirs, tips, etc',
+            price: 100,
         },   
     ];
-    const  [data,setData]=useState(igData)
+    const  [data,setData]=useState<Budget[]>(igData)
     
     useEffect(()=>{
         if(budget){
-            const budgetData=Object.entries(budget).map(([key,value])=>{
-                return {content: value.description,price: value.price}
-            }
-        )
-        setData(data.map((item,index)=>{
-            return {...item,content: budgetData[index].content,price: budgetData[index].price}
+            const budgetData=igData?.map((item:any)=>{
+                return {price: budget[item.title.toLowerCase()]}
+            })
+            console.log(budgetData);
+        setData(data.map((item,index)=>{  
+            return {...item,price: budgetData[index]?.price}
         }));
         }
         
@@ -126,13 +144,13 @@ export function BdBreakdown({isMobile,budget}) {
                             <Box className='d-flex'>
                             <img src={data[item].img} style={{ marginRight: '16px', ...imgStyle }} alt={data[item].title} />
                             <Box>
-                                <Typography sx={tileStyle}>{data[item].title}</Typography>
-                                <Typography sx={textStyle}>{data[item].content}</Typography>
+                                <Typography sx={tileStyle}>{data[item]?.title}</Typography>
+                                <Typography sx={textStyle}>{data[item]?.content}</Typography>
                             </Box>
                                 
                             </Box>
                             <Box>
-                                <Typography sx={pricestyle}>${data[item].price}</Typography>
+                                <Typography sx={pricestyle}>${data[item]?.price}</Typography>
                             </Box>
                         </Grid2>
                     ))}
@@ -151,7 +169,7 @@ export function BdBreakdown({isMobile,budget}) {
                 <Box className= {isMobile ?'': 'd-flex align-items-center flex-grow-1'} sx={{
                     marginBottom: '24px',
                 }}>
-                    <img src="/img/budget/budget7.svg" alt="Discount" style={{marginRight:'16px',...imgStyle1}} />
+                    <img src="/page3/budget/budget7.svg" alt="Discount" style={{marginRight:'16px',...imgStyle1}} />
                     <Typography sx={text1Style}>We have discount air tickets here for you!</Typography>
                 </Box>
                 <Button variant='contained' sx={buttonStyle}>

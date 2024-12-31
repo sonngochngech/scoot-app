@@ -4,7 +4,7 @@ import { Box, Container, Grid2, Typography, useMediaQuery,useTheme } from "@mui/
 import { useEffect, useState } from "react";
 
 
-function Rating({rating}){
+function Rating({rating}:any){
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [data, setData] = useState<{title: string, rating: number}[]>([]);

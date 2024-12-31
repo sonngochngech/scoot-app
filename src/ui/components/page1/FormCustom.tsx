@@ -22,6 +22,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import dayjs, { Dayjs } from 'dayjs';
 import cities from '../../../assets/cities.json';
 import { SavedUserInfo } from "../../../types";
+import { getFengShuiPrediction } from "../../../libs/slices/fengShuiSlice";
 import CustomAutocomplete from "./CustomAutocomplete";
 
 interface FormState {
@@ -97,6 +98,7 @@ const getInitialState = (): FormState => {
 
 export default function FormCustom() {
     const [formState, setFormState] = useState<FormState>(getInitialState);
+    const navigate=useNavigate();
 
     useEffect(() => {
         try {
@@ -128,9 +130,6 @@ export default function FormCustom() {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -141,7 +140,7 @@ export default function FormCustom() {
                 name: formState.name,
                 email: formState.email,
                 birthdate: `${Number(formState.timeOfBirth?.get("year"))}-${Number(formState.timeOfBirth?.get("month"))}-${Number(formState.timeOfBirth?.get("date"))}`,
-                domestic: formState.placeTravel === "domestic" ? 0 : 1,
+                sex: formState.placeTravel === "domestic" ? 0 : 1,
                 phone: formState.phone,
                 timeOfBirth: `${Number(formState.timeOfBirth?.get("hour"))}:${Number(formState.timeOfBirth?.get("minute"))}`,
                 placeOfBirth: formState.placeOfBirth,
@@ -163,8 +162,6 @@ export default function FormCustom() {
         // }
 
         localStorage.setItem("userInfo", JSON.stringify(luckyTravelInfor));
-
-        // dispatch(getFengShuiPrediction(payload) as any);
         navigate('/trip');
     }
 

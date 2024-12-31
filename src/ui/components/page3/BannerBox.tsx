@@ -5,7 +5,7 @@ import { Container, Typography, useMediaQuery ,useTheme} from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const BannerBox = ({city,duration}) => {
+const BannerBox = ({city,duration}:any) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     return (
@@ -24,9 +24,9 @@ const BannerBox = ({city,duration}) => {
              
             >
                 <Typography  sx={{
-                        fontSize:  '2.5rem',
+                        fontSize:  '40px',
                         fontWeight: 500,
-                        lineHeight: '3rem',
+                        lineHeight: '48px',
                     }}>Lucky Trip to </Typography>
                 <Typography
                     sx={{
@@ -36,7 +36,7 @@ const BannerBox = ({city,duration}) => {
                         letterSpacing: '-0.03em',
                     }}
                 >
-                   {city}
+                   {city?.name}
                 </Typography>
             </Box>
             <Box sx={{

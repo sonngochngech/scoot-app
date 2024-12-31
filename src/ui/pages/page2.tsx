@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { Slider, Box, Grid, Typography, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import BackIcon from "../components/page2/BackIcon";
+import { SavedUserInfo, TripInfoTypePayLoad, UserInfoTypePayLoad } from "../../types";
 import "swiper/css";
 import { styled } from '@mui/material/styles';
+import { getFengShuiPrediction, getTripPlanning } from "../../libs/slices/fengShuiSlice";
+import { validateImage } from "../../services";
+import { useNavigate } from "react-router";
+import { json } from "stream/consumers";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -20,51 +27,142 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export const Page2 = () => {
     const [budget, setBudget] = useState<number>(0);
+    const navigate=useNavigate();
     const handleBudgetChange = (_: Event, newValue: number | number[]) => {
         setBudget(newValue as number);
     };
 
-    const data = {
-        name: "Nguyễn Mai Anh",
-        dateOfBirth: "08/08/2000",
-        detailFengShui: `According to Feng Shui Bazi, you have a <span style="font-weight: bold;">Metal element</span> and a <span style="font-weight: bold;">Water deficiency</span>. <span style="font-weight: bold;">Your strengths</span> lie in intelligence and excellent communication skills. <span style="font-weight: bold;">However</span>, you may easily be swayed by emotions, leading to stress and mental fatigue.`,
-        recommentFengShui: `To balance your destiny and invite more luck and joy into your life, it's recommended that you <span style="font-weight: bold;">should travel to the North</span>, visiting places connected to the <span style="font-weight: bold;">sea or rivers</span>. These destinations embody the dynamic, prosperous, and adventurous spirit that aligns with your element. The coastal atmosphere will help <span style="font-weight: bold;">relieve stress and restore emotional balance</span>. Additionally, you'll have the chance to fully absorb the vital energy of nature, drawing in harmonious vibes from the earth and sky.`,
-        recommentPlaces: [
-            {
-                placeName: "Bali, Indonesia",
-                img: "https://media.istockphoto.com/id/944812540/vi/anh/c%E1%BA%A3nh-quan-n%C3%BAi-ponta-delgada-azores.jpg?s=612x612&w=0&k=20&c=_Q2nGyKzOQDYK3FP8WChOfvOZAM0uw5R0t6Oi1WW_gQ=",
-                description: [
-                    "Bali is a destination rich in Water and Wood elements, symbolizing growth, renewal, and emotional healing—perfect for balancing your energy map.",
-                    "Its lush tropical environment and tranquil beaches promote relaxation, emotional harmony, and creative inspiration.",
-                    "Enjoy yoga retreats in Ubud, relax by the ocean at Seminyak Beach, and explore sacred water temples like Tirta Empul for spiritual cleansing.",
-                ],
-            },
-            {
-                placeName: "Bali, Indonesia",
-                img: "https://media.istockphoto.com/id/944812540/vi/anh/c%E1%BA%A3nh-quan-n%C3%BAi-ponta-delgada-azores.jpg?s=612x612&w=0&k=20&c=_Q2nGyKzOQDYK3FP8WChOfvOZAM0uw5R0t6Oi1WW_gQ=",
-                description: [
-                    "Bali is a destination rich in Water and Wood elements, symbolizing growth, renewal, and emotional healing—perfect for balancing your energy map.",
-                    "Its lush tropical environment and tranquil beaches promote relaxation, emotional harmony, and creative inspiration.",
-                    "Enjoy yoga retreats in Ubud, relax by the ocean at Seminyak Beach, and explore sacred water temples like Tirta Empul for spiritual cleansing.",
-                ],
-            },
-            {
-                placeName: "Bali, Indonesia",
-                img: "https://media.istockphoto.com/id/944812540/vi/anh/c%E1%BA%A3nh-quan-n%C3%BAi-ponta-delgada-azores.jpg?s=612x612&w=0&k=20&c=_Q2nGyKzOQDYK3FP8WChOfvOZAM0uw5R0t6Oi1WW_gQ=",
-                description: [
-                    "Bali is a destination rich in Water and Wood elements, symbolizing growth, renewal, and emotional healing—perfect for balancing your energy map.",
-                    "Its lush tropical environment and tranquil beaches promote relaxation, emotional harmony, and creative inspiration.",
-                    "Enjoy yoga retreats in Ubud, relax by the ocean at Seminyak Beach, and explore sacred water temples like Tirta Empul for spiritual cleansing.",
-                ],
-            },
-        ],
+    const dispatch = useDispatch();
+    const [renderData, setRenderData] = useState<any>(null);
+    const { loading, error, prediction: data } = useSelector((state: any) => state.fengShui);
+    const jsonUserInfo: SavedUserInfo = localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo") as string)
+      : null;
+  
+    const getLuckyTravel = (data: any) => {
+      dispatch(getFengShuiPrediction(data) as any);
     };
+  
+    useEffect(() => {
+      if (data === null && jsonUserInfo) {
+        const payload: UserInfoTypePayLoad = {
+          userInfo: { 
+             name: jsonUserInfo?.userInfo?.name,
+                sex: jsonUserInfo?.userInfo?.sex,
+                phone: jsonUserInfo?.userInfo?.phone,
+                birthdate: jsonUserInfo?.userInfo?.birthdate,
+                timeOfBirth: jsonUserInfo?.userInfo?.timeOfBirth,
+                placeOfBirth: jsonUserInfo?.userInfo?.placeOfBirth?.code },
+                departureCity: jsonUserInfo?.departureCity?.code,
+                 arrivalCity: jsonUserInfo?.arrivalCity?.code,
+        };
+        if (payload) {
+          getLuckyTravel(payload);
+        }
+      }
+      
+    }, []);
+
+    useEffect(()=>{
+        if(data){
+            console.log(data);
+            mapData(data).then((result)=>{
+                setRenderData(result);
+            })
+        }
+    },[data])
+
+
+
+    const mapData=async (data:any)=>{
+        const {start, enhancePart} = seperateText(data?.comment);
+        const recommendedPlaces = await convertRecommendedPlaces(data?.arrivalCity, data?.suggestedCities);
+        const result = {
+            name: jsonUserInfo?.userInfo?.name||'zo zo',
+            dateOfBirth: jsonUserInfo?.userInfo?.birthdate ||'zo zo ',
+            detailFengShui:start,
+            recommentFengShui: enhancePart,
+            recommentPlaces: recommendedPlaces
+        };
+        return result;
+
+    }
+    const seperateText=(text: string)=>{
+        const splitPoint = text.indexOf("To enhance");
+        const start = text.slice(0, splitPoint).trim();
+        const enhancePart = text.slice(splitPoint).trim();
+        return {start, enhancePart};
+    }
+
+    const convertRecommendedPlaces=async (arrivalCity: any,suggestedCities:any )=>{
+        const recommendedPlaces = [];
+        const validArivalImages= await validateImage(arrivalCity.images);
+        const validArivalImage = validArivalImages ?validArivalImages : [];
+
+        const validSuggestedImages = await Promise.all(suggestedCities.map(async (city: any) => {
+            const validImages = await validateImage(city.images);
+            return validImages ? validArivalImage : [];
+        }));
+
+        recommendedPlaces.push({
+            placeName: arrivalCity.name,
+            code: arrivalCity.code,
+            img: validArivalImage,
+            description: [
+                arrivalCity.reason[0]["description"],
+                arrivalCity.reason[1]["description"],
+                arrivalCity.reason[2]["description"],
+            ],
+        });
+        suggestedCities.forEach((city:any, index:number)=>{
+            recommendedPlaces.push({
+                placeName: city.name,
+                code: city.code,
+                img: validSuggestedImages[index] ? validSuggestedImages[index] : "",
+                description: [
+                    city.reason[0]["description"],
+                    city.reason[1]["description"],
+                    city.reason[2]["description"],
+                ],
+            });
+        });
+        console.log("RecommendedPlaces");
+        console.log(recommendedPlaces);
+        return recommendedPlaces;
+    }
+
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
+    const [isChoosenPosition, setIsChoosenPosition] = useState(0);
+    const handleOpen = (index:any) =>{
+     setOpen(true);
+     setIsChoosenPosition(index);
+    }
     const handleClose = () => setOpen(false);
+    const handleGetTrip = () => {
+        const arrival=renderData?.recommentPlaces[isChoosenPosition];
+        const data: TripInfoTypePayLoad = {
+        duration: jsonUserInfo?.tripInfo?.duration,
+        budget: budget*1000000,
+        arrival: {
+            code : arrival.code,
+            name: arrival.placeName
+        },
+        departure: jsonUserInfo?.tripInfo?.departure,
+        travelerQuantities: 4,
+        startDate: jsonUserInfo?.tripInfo?.startDate,
+        endDate: jsonUserInfo?.tripInfo?.startDate,
+        arrivalImg: arrival.img,
+        arrivalDescription: arrival.description[0],
+        }
+        localStorage.setItem('tripInfo', JSON.stringify(data));
+
+        console.log(data);
+        navigate('/page3');
+
+    };
 
     return (
         <Box>
@@ -142,7 +240,7 @@ export const Page2 = () => {
                                 xs: 0,
                             },
                         }}>
-                            For our customer {data.name}, born on {data.dateOfBirth}
+                            For our customer {renderData?.name}, born on {renderData?.dateOfBirth}
                         </Typography>
                         <Typography
                             sx={{
@@ -156,7 +254,7 @@ export const Page2 = () => {
                                     xs: 0,
                                 },
                             }}
-                            dangerouslySetInnerHTML={{ __html: data.detailFengShui }}
+                            dangerouslySetInnerHTML={{ __html: renderData?.detailFengShui }}
                         />
                         <Typography
                             sx={{
@@ -170,7 +268,7 @@ export const Page2 = () => {
                                     xs: 0,
                                 },
                             }}
-                            dangerouslySetInnerHTML={{ __html: data.recommentFengShui }}
+                            dangerouslySetInnerHTML={{ __html: renderData?.recommentFengShui }}
                         />
                     </Grid>
                     {!isMobile &&
@@ -235,7 +333,7 @@ export const Page2 = () => {
                     </Grid>
                 </Grid>
 
-                {data.recommentPlaces.map((place, place_idx) => (
+                {renderData?.recommentPlaces?.map((place:any, place_idx:number) => (
                     <Box
                         sx={{
                             marginBottom: {
@@ -315,7 +413,7 @@ export const Page2 = () => {
                             >
                                 <Box
                                     component="img"
-                                    src={place.img}
+                                    src={place.img[0]}
                                     sx={{
                                         width: "100%",
                                         height: {
@@ -517,7 +615,7 @@ export const Page2 = () => {
                                             xs: "100%",
                                         },
                                     }}
-                                    onClick={handleOpen}
+                                    onClick={()=>handleOpen(place_idx)}
                                 >
                                     I WANT TO KNOW MORE
                                 </Button>
@@ -571,7 +669,7 @@ export const Page2 = () => {
                                             </IconButton>
                                         </Box>
                                         <DialogContent dividers>
-                                            <Box sx={{ padding: "30px 12px 30px 12px" }}>
+                                            <Box sx={{ padding: "30px 35px 30px 12px", overflow: "hidden", }} >
                                                 <Typography sx={{
                                                     fontSize: {
                                                         md: "14px",
@@ -685,6 +783,7 @@ export const Page2 = () => {
                                                                         xs: "14px",
                                                                     },
                                                                 }}
+                                                                 onClick={handleGetTrip}
                                                             >
                                                                 View Trip Schedule
                                                             </Button>
@@ -713,6 +812,7 @@ export const Page2 = () => {
                                                                         xs: "14px",
                                                                     },
                                                                 }}
+                                                                onClick={handleGetTrip}
                                                             >
                                                                 View Trip Schedule
                                                             </Button>
