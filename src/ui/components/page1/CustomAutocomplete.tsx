@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Autocomplete, TextField, Box } from "@mui/material";
 
 interface Option {
@@ -15,26 +15,12 @@ interface CustomAutocompleteProps {
   loadingIcon?: React.ReactNode;
 }
 
-const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
-  label,
-  placeholder,
-  value,
-  options,
-  onChange,
-  loadingIcon,
-}) => {
-  const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
-  const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState<string>("");
-
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null); // Giới hạn tần suất tìm kiếm
-  const workerRef = useRef<Worker | null>(null);
-
-  useEffect(() => {
-    // Tạo Web Worker cho tìm kiếm bất đồng bộ
-    workerRef.current = new Worker(
-      URL.createObjectURL(
-        new Blob([`
+const createSearchWorker = () =>
+  new Worker(
+    URL.createObjectURL(
+      new Blob(
+        [
+          `
           self.onmessage = function(e) {
             const { query, options } = e.data;
             const filtered = options.filter(option =>
@@ -42,33 +28,80 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
             );
             self.postMessage(filtered);
           };
-        `], { type: "text/javascript" })
-    ));
+        `,
+        ],
+        { type: "text/javascript" }
+      )
+    )
+  );
 
+const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
+  label,
+  placeholder,
+  value,
+  options,
+  onChange,
+}) => {
+  const [visibleOptions, setVisibleOptions] = useState<Option[]>(options.slice(0, 50)); 
+  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState<string>("");
+
+  const workerRef = useRef<Worker | null>(null);
+
+  useEffect(() => {
+    workerRef.current = createSearchWorker();
     workerRef.current.onmessage = (e) => {
-      setFilteredOptions(e.data); // Cập nhật danh sách kết quả
+      setVisibleOptions(e.data.slice(0, 50));
       setLoading(false);
     };
 
     return () => {
       workerRef.current?.terminate();
     };
+  }, []);
+
+  const debounceSearch = useMemo(() => {
+    let timeout: NodeJS.Timeout | null = null;
+
+    return (searchQuery: string) => {
+      if (timeout) clearTimeout(timeout);
+
+      timeout = setTimeout(() => {
+        if (searchQuery.trim() === "") {
+          setVisibleOptions(options.slice(0, 50));
+          setLoading(false);
+        } else {
+          setLoading(true);
+          workerRef.current?.postMessage({ query: searchQuery, options });
+        }
+      }, 300);
+    };
   }, [options]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     setQuery(inputValue);
+    debounceSearch(inputValue);
+  };
 
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current); // Hủy bỏ timeout cũ nếu có
+  const handleScroll = (event: React.SyntheticEvent) => {
+    const listboxNode = event.currentTarget;
+
+    if (
+      listboxNode.scrollTop + listboxNode.clientHeight >=
+      listboxNode.scrollHeight - 10
+    ) {
+      if (!loading && visibleOptions.length < options.length) {
+        setLoading(true);
+        setTimeout(() => {
+          setVisibleOptions((prev) => [
+            ...prev,
+            ...options.slice(prev.length, prev.length + 50),
+          ]);
+          setLoading(false);
+        }, 300);
+      }
     }
-
-    setLoading(true);
-
-    // Đặt lại timeout để gửi yêu cầu tìm kiếm sau một thời gian
-    timeoutRef.current = setTimeout(() => {
-      workerRef.current?.postMessage({ query: inputValue, options });
-    }, 300); // Tìm kiếm sau 300ms kể từ lần gõ cuối cùng
   };
 
   return (
@@ -77,28 +110,20 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
       onChange={onChange}
       size="small"
       popupIcon={
-        <img
-          src="/page1/ic_down.svg"
-          alt="icon"
-          style={{ width: 18 }}
-        />
+        <img src="/page1/ic_down.svg" alt="icon" style={{ width: 18 }} />
       }
-      options={filteredOptions}
+      options={visibleOptions}
       autoHighlight
       getOptionLabel={(option) => option.name}
-      renderOption={(props, option) => {
-        const { key, ...optionProps } = props;
-        return (
-          <Box
-            key={key}
-            component="li"
-            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-            {...optionProps}
-          >
-            {option.name}
-          </Box>
-        );
-      }}
+      renderOption={(props, option) => (
+        <Box
+          component="li"
+          sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+          {...props}
+        >
+          {option.name}
+        </Box>
+      )}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -106,24 +131,29 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
           placeholder={placeholder}
           required
           variant="standard"
+          value={query}
           onChange={handleInputChange}
-          sx={{ "& .MuiInputBase-root": { borderRadius: 2.5 } }}
+          sx={{
+            "& .MuiInputBase-root": { borderRadius: 2.5 },
+            "& .MuiInputLabel-root": {
+              marginBottom: "24px",
+            },
+          }}
           InputLabelProps={{ shrink: true }}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <>
-                {loading ? (
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {loadingIcon || <LoadingDots />}
-                  </Box>
-                ) : null}
+                {loading ? <LoadingSpinner /> : null}
                 {params.InputProps.endAdornment}
               </>
             ),
           }}
         />
       )}
+      ListboxProps={{
+        onScroll: handleScroll,
+      }}
       sx={{
         "& .MuiAutocomplete-popupIndicator": {
           position: "relative",
@@ -140,45 +170,30 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
   );
 };
 
-const LoadingDots: React.FC = () => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "4px",
-      }}
-    >
-      {[...Array(3)].map((_, i) => (
-        <Box
-          key={i}
-          sx={{
-            width: "6px",
-            height: "6px",
-            backgroundColor: "#000",
-            borderRadius: "50%",
-            animation: "dot-flash 1.5s infinite",
-            animationDelay: `${i * 0.2}s`,
-          }}
-        />
-      ))}
-      <style>
-        {`
-          @keyframes dot-flash {
-            0%, 80%, 100% {
-              opacity: 0;
-              transform: translateY(0);
-            }
-            40% {
-              opacity: 1;
-              transform: translateY(-8px);
-            }
+const LoadingSpinner: React.FC = () => (
+  <Box
+    sx={{
+      width: "20px",
+      height: "20px",
+      border: "3px solid rgba(0, 0, 0, 0.3)",
+      borderTop: "3px solid #000",
+      borderRadius: "50%",
+      animation: "spin 1s linear infinite",
+    }}
+  >
+    <style>
+      {`
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
           }
-        `}
-      </style>
-    </Box>
-  );
-};
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}
+    </style>
+  </Box>
+);
 
 export default CustomAutocomplete;

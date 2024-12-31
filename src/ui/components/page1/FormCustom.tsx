@@ -96,9 +96,23 @@ const getInitialState = (): FormState => {
     };
 };
 
+const isFormStateInvalid = (state: FormState): boolean => {
+    for (const [key, value] of Object.entries(state)) {
+        if (
+            value === null ||
+            value === "" ||
+            (Array.isArray(value) && value.some((v) => v === null)) ||
+            (dayjs.isDayjs(value) && !value.isValid())
+        ) {
+            return true;
+        }
+    }
+    return false;
+};
+
 export default function FormCustom() {
     const [formState, setFormState] = useState<FormState>(getInitialState);
-    const navigate=useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         try {
@@ -130,9 +144,7 @@ export default function FormCustom() {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-
+    const handleSubmit = () => {
         const startDate = formState.timeRange[0] || dayjs();
         const endDate = formState.timeRange[1] || startDate;
         const luckyTravelInfor: SavedUserInfo = {
@@ -162,7 +174,9 @@ export default function FormCustom() {
         // }
 
         localStorage.setItem("userInfo", JSON.stringify(luckyTravelInfor));
-        navigate('/trip');
+        if (!isFormStateInvalid(formState)) {
+            navigate('/trip');
+        }
     }
 
     return (
@@ -376,74 +390,12 @@ export default function FormCustom() {
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={6} md={2.4}>
-                        {/* <Autocomplete
-                            value={formState.placeOfBirth || null}
-                            onChange={(e, value) => handleInputChange('placeOfBirth', value)}
-                            size={"small"}
-                            popupIcon={
-                                <img
-                                    src="/page1/ic_down.svg"
-                                    alt="icon"
-                                    style={{
-                                        width: 18,
-                                    }}
-                                />
-                            }
-                            options={cities}
-                            autoHighlight
-                            getOptionLabel={(option) => option.name}
-                            renderOption={(props, option) => {
-                                const { key, ...optionProps } = props;
-                                return (
-                                    <Box
-                                        key={key}
-                                        component="li"
-                                        sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                                        {...optionProps}
-                                    >
-                                        {option.name}
-                                    </Box>
-                                );
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Place of birth"
-                                    placeholder="Your place of birth"
-                                    required
-                                    variant="standard"
-                                    sx={{
-                                        "& .MuiInputBase-root": {
-                                            borderRadius: 2.5,
-                                        },
-                                    }}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                />
-                            )}
-                            sx={{
-                                "& .MuiAutocomplete-popupIndicator": {
-                                    position: "relative",
-                                    right: "12px",
-                                    zIndex: 1,
-                                },
-                                "& .MuiAutocomplete-endAdornment": {
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "16px",
-                                },
-                            }}
-                        /> */}
                         <CustomAutocomplete
-                            label="City"
-                            placeholder="Type to search..."
+                            label="Place of birth"
+                            placeholder="Your place of birth"
                             value={formState.placeOfBirth || null}
                             onChange={(e, value) => handleInputChange('placeOfBirth', value)}
                             options={cities}
-                            loadingIcon={
-                                <div style={{ fontSize: "24px", color: "blue" }}>...</div>
-                            }
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
@@ -525,69 +477,16 @@ export default function FormCustom() {
                                 xs: "13px",
                             },
                             fontWeight: "bold",
-                            marginBottom: "12px",
+                            marginBottom: "20px",
                         }}>
                             You are traveling from
                         </Typography>
-                        <Autocomplete
+                        <CustomAutocomplete
+                            label="Where from"
+                            placeholder="Select a city"
                             value={formState.travelingFrom || null}
                             onChange={(e, value) => handleInputChange('travelingFrom', value)}
-                            size={"small"}
-                            popupIcon={
-                                <img
-                                    src="/page1/ic_down.svg"
-                                    alt="icon"
-                                    style={{
-                                        width: 18,
-                                    }}
-                                />
-                            }
                             options={cities}
-                            autoHighlight
-                            getOptionLabel={(option) => option.name}
-                            renderOption={(props, option) => {
-                                const { key, ...optionProps } = props;
-                                return (
-                                    <Box
-                                        key={key}
-                                        component="li"
-                                        sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                                        {...optionProps}
-                                    >
-                                        {option.name}
-                                    </Box>
-                                );
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Where from"
-                                    placeholder="Select a city"
-                                    required
-                                    variant="standard"
-                                    sx={{
-                                        "& .MuiInputBase-root": {
-                                            borderRadius: 2.5,
-                                        },
-                                        marginTop: "12px",
-                                    }}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                />
-                            )}
-                            sx={{
-                                "& .MuiAutocomplete-popupIndicator": {
-                                    position: "relative",
-                                    right: "12px",
-                                    zIndex: 1,
-                                },
-                                "& .MuiAutocomplete-endAdornment": {
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "16px",
-                                },
-                            }}
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
@@ -628,6 +527,13 @@ export default function FormCustom() {
                         }}>
                             Your desired destination
                         </Typography>
+                        <CustomAutocomplete
+                            label="Where to"
+                            placeholder="Select a city"
+                            value={formState.desiredDestination || null}
+                            onChange={(e, value) => handleInputChange('desiredDestination', value)}
+                            options={cities}
+                        />
                         <Autocomplete
                             value={formState.desiredDestination || null}
                             onChange={(e, value) => handleInputChange('desiredDestination', value)}
