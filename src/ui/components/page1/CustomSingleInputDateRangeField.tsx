@@ -33,6 +33,7 @@ const CustomSingleInputDateRangeField: React.FC<CustomSingleInputDateRangeFieldP
     return (
         <Box sx={{ position: 'relative', width: '100%' }}>
             <TextField
+                required
                 label="Date"
                 variant="standard"
                 value={formattedDateRange}
