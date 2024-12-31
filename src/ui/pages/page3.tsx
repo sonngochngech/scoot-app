@@ -26,7 +26,7 @@ import { getTripPlanning, setValidImagePlanning } from "../../libs/slices/fengSh
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { SavedUserInfo, TripInfoTypePayLoad } from "../../types";  
-import { json } from 'stream/consumers';
+
 
 function calculateDuration(startDate: any, endDate:any) {
 
@@ -49,50 +49,24 @@ function calculateDuration(startDate: any, endDate:any) {
 
 const Page3 = () => {
 
+    
    
     const theme = useTheme();
     const isTablet = useMediaQuery(theme.breakpoints.down('md'));
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate=useNavigate();
 
-    const box1Style = {
-        paddingLeft: '5.62vw',
-        paddingRight: '5.62vw',
-        paddingBottom: '32px',
-        paddingTop: '32px'
-
-    }
-    const box2Style={
-        paddingLeft: '5.62vw',
-        paddingRight: isMobile ? '0': '5.62vw',
-        paddingBottom: '32px',
-        paddingTop: '32px',
-    }
-
-    const box3Style={
-        paddingLeft: '5.62vw',
-        paddingRight:'0',
-        paddingBottom: '32px',
-        paddingTop: '32px',
-    }
-    // ************** Handle Data ********************************
     const [tripInfo, setTripInfo] = useState<TripInfoTypePayLoad | null>(null);
     const [userInfo, setUserInfo] = useState<SavedUserInfo | null>(null);
     const targetRef = useRef();
 
     const { tripLoading: loading, tripError: error, planning: tripData, allActivities, outPlanning ,isLoadedTrip} = useSelector((state: any) => state.fengShui);
     const dispatch = useDispatch();
-    console.log('tripData',tripData);
-
     const storedTripInfo = localStorage.getItem('tripInfo');
     const storedUserInfo = localStorage.getItem('userInfo');
     let jsonTripInfo: TripInfoTypePayLoad = storedTripInfo ? JSON.parse(storedTripInfo) : null;
     let jsonUserInfo: SavedUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
-
-    
-
     useEffect(() => {
-        console.log('tripData',tripData);
         if (jsonTripInfo && jsonUserInfo && Object.keys(jsonTripInfo).length > 0 && Object.keys(jsonUserInfo).length > 0 ) {
             setTripInfo(jsonTripInfo);
             setUserInfo(jsonUserInfo);
@@ -100,6 +74,8 @@ const Page3 = () => {
             if (tripData === null && (!loading) ) dispatch(getTripPlanning(payload) as any);
         }
     }, []);
+
+ 
 
 
     useEffect(() => {
@@ -161,22 +137,34 @@ const Page3 = () => {
         
     }, [tripData,isLoadedTrip]);
 
+    // **************** Style ***********************
 
+    const box1Style = {
+        paddingLeft: '5.62vw',
+        paddingRight: '5.62vw',
+        paddingBottom: '32px',
+        paddingTop: '32px'
 
-    // ************** Data ******************************** 
+    }
+    const box2Style={
+        paddingLeft: '5.62vw',
+        paddingRight: isMobile ? '0': '5.62vw',
+        paddingBottom: '32px',
+        paddingTop: '32px',
+    }
 
-
-
-    
-
-    
-
-
-
-
+    const box3Style={
+        paddingLeft: '5.62vw',
+        paddingRight:'0',
+        paddingBottom: '32px',
+        paddingTop: '32px',
+    }
 
     return (
-        <Box sx={{ position: 'relative' }} >
+        <Box>
+                <Box sx={{ position: 'relative' }} 
+            ref={targetRef}
+        >
             <BgBanner isMobile={isMobile} />
             <Box className='d-flex justify-content-left align-items-center' sx={{position:'absolute', top: '64px',left:'64px',zIndex:3}}>
                 <img src="/page3/back-arrow.svg"
@@ -212,17 +200,15 @@ const Page3 = () => {
                     <Location isMobile={isMobile} itemData={tripData?.foods} itemImage={tripData?.img?.food} title={'Santorini'} />
                     <Location isMobile={isMobile} itemData={tripData?.accommodation} itemImage={tripData?.img?.accommodation} title={'Santorini'} />
                     <Inspiration wardrobe={tripData?.wardrobe}/>
-                    <Experience experiences={tripData?.topExperience} imgs={jsonTripInfo.arrivalImg}/>
+                    <Experience experiences={tripData?.topExperience} imgs={jsonTripInfo?.arrivalImg}/>
                     <FengShuiFlight/>
                     <Itinerary itineraries={tripData?.itinerary}  />
                     <TripButtonGroup/>
-                   
                 </Stack>
-
-          
             </Box>
-        </Box>
-       
+        </Box>   
+    </Box>
+    
     );
 };
 

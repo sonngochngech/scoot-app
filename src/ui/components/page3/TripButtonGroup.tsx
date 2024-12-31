@@ -7,43 +7,40 @@ import { ShareUri } from "../../../assets/api";
 import { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { saveTripData } from "../../../libs/slices/fengShuiSlice";
 
 
 export default function TripButtonGroup({ isMobile, target }: any) {
-    const isShareLoading=false;
-    const shareLink="";
-    const isError=false;
-    const loading=false;
 
-    // const storedTripInfo = localStorage.getItem('tripInfo');
-    // const storedUserInfo = localStorage.getItem('userInfo');
-    // const tripInfo = storedTripInfo ? JSON.parse(storedTripInfo) : null;
-    // const userInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
-    // const { isShare, originalData, isShareLoading, isShareError, shareLink, planning: tripData } = useSelector((state: any) => state.fengShui);
-    // const dispatch = useDispatch();
-    // const [isError, setIsError] = useState<string | null>("");
-    // const [loading, setLoading] = useState<boolean | null>(false);
+    const storedTripInfo = localStorage.getItem('tripInfo');
+    const storedUserInfo = localStorage.getItem('userInfo');
+    const tripInfo = storedTripInfo ? JSON.parse(storedTripInfo) : null;
+    const userInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
+    const { isShare, originalData, isShareLoading, isShareError, shareLink, planning: tripData } = useSelector((state: any) => state.fengShui);
+    const dispatch = useDispatch();
+    const [isError, setIsError] = useState<string | null>("");
+    const [loading, setLoading] = useState<boolean | null>(false);
 
-    // useEffect(() => {
-    //     if (isShareError) {
-    //         setIsError(isShareError);
-    //         const timer = setTimeout(() => {
-    //             setIsError("");
-    //         }, 5000);
-    //         return () => clearTimeout(timer);
-    //     }
+    useEffect(() => {
+        if (isShareError) {
+            setIsError(isShareError);
+            const timer = setTimeout(() => {
+                setIsError("");
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
 
-    // }, [isShareError]);
+    }, [isShareError]);
 
     const handleShare = () => {
-        // let newOrignalData = JSON.parse(JSON.stringify(originalData));
-        // newOrignalData.itinerary = tripData?.itinerary;
-        // const data = {
-        //     tripInfo: tripInfo,
-        //     userInfo: { name: userInfo?.userInfo?.name },
-        //     tripData: newOrignalData
-        // }
-        // dispatch(saveTripData(data) as any);
+        let newOrignalData = JSON.parse(JSON.stringify(originalData));
+        newOrignalData.itinerary = tripData?.itinerary;
+        const data = {
+            tripInfo: tripInfo,
+            userInfo: userInfo?.userInfo,
+            tripData: newOrignalData
+        }
+        dispatch(saveTripData(data) as any);
 
     }
     // const handleCopy = () => {
@@ -51,92 +48,92 @@ export default function TripButtonGroup({ isMobile, target }: any) {
     // }
 
     const handleDownload = async () => {
-        // try {
-        //     setLoading(true);
+        try {
+            setLoading(true);
     
-        //     const canvases = [];
-        //     let totalHeight = 0;
-        //     const elements = document.querySelectorAll("body > *");
+            const canvases = [];
+            let totalHeight = 0;
+            const elements = document.querySelectorAll("body > *");
     
-        //     const elementsArray = Array.from(elements);
+            const elementsArray = Array.from(elements);
     
-        //     for (const element of elementsArray) {
-        //         const boundingRect = (element as HTMLElement).getBoundingClientRect();
+            for (const element of elementsArray) {
+                const boundingRect = (element as HTMLElement).getBoundingClientRect();
     
-        //         // Kiểm tra nếu phần tử có kích thước hợp lệ
-        //         if (boundingRect.width === 0 || boundingRect.height === 0) {
-        //             console.warn("Bỏ qua phần tử với kích thước 0:", element);
-        //             continue;
-        //         }
+                // Kiểm tra nếu phần tử có kích thước hợp lệ
+                if (boundingRect.width === 0 || boundingRect.height === 0) {
+                    console.warn("Bỏ qua phần tử với kích thước 0:", element);
+                    continue;
+                }
     
-        //         try {
-        //             const canvas = await html2canvas(element as HTMLElement, {
-        //                 scale: 2, 
-        //                 useCORS: true, 
-        //             });
-        //             canvases.push(canvas);
-        //             totalHeight += canvas.height;
-        //         } catch (canvasError) {
-        //             console.error("Lỗi khi tạo canvas cho phần tử:", element, canvasError);
-        //         }
-        //     }
+                try {
+                    const canvas = await html2canvas(element as HTMLElement, {
+                        scale: 2, 
+                        useCORS: true, 
+                    });
+                    canvases.push(canvas);
+                    totalHeight += canvas.height;
+                } catch (canvasError) {
+                    console.error("Lỗi khi tạo canvas cho phần tử:", element, canvasError);
+                }
+            }
     
-        //     if (canvases.length === 0) {
-        //         console.error("Không có canvas hợp lệ được tạo.");
-        //         return;
-        //     }
+            if (canvases.length === 0) {
+                console.error("Không có canvas hợp lệ được tạo.");
+                return;
+            }
     
-        //     const combinedCanvas = document.createElement("canvas");
-        //     const ctx = combinedCanvas.getContext("2d");
+            const combinedCanvas = document.createElement("canvas");
+            const ctx = combinedCanvas.getContext("2d");
     
-        //     combinedCanvas.width = canvases[0].width;
-        //     combinedCanvas.height = totalHeight;
+            combinedCanvas.width = canvases[0].width;
+            combinedCanvas.height = totalHeight;
     
-        //     let currentHeight = 0;
-        //     canvases.forEach((canvas) => {
-        //         ctx?.drawImage(canvas, 0, currentHeight);
-        //         currentHeight += canvas.height;
-        //     });
+            let currentHeight = 0;
+            canvases.forEach((canvas) => {
+                ctx?.drawImage(canvas, 0, currentHeight);
+                currentHeight += canvas.height;
+            });
     
-        //     const imgData = combinedCanvas.toDataURL("image/png");
-        //     const pdf = new jsPDF("p", "mm", "a4");
+            const imgData = combinedCanvas.toDataURL("image/png");
+            const pdf = new jsPDF("p", "mm", "a4");
     
-        //     const pdfWidth = pdf.internal.pageSize.getWidth();
-        //     const pdfHeight = (combinedCanvas.height * pdfWidth) / combinedCanvas.width;
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (combinedCanvas.height * pdfWidth) / combinedCanvas.width;
     
-        //     if (pdfHeight <= pdf.internal.pageSize.getHeight()) {
-        //         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        //     } else {
-        //         let position = 0;
-        //         while (position < pdfHeight) {
-        //             pdf.addImage(
-        //                 imgData,
-        //                 "PNG",
-        //                 0,
-        //                 position === 0 ? 0 : -position,
-        //                 pdfWidth,
-        //                 pdfHeight
-        //             );
-        //             position += pdf.internal.pageSize.getHeight();
-        //             if (position < pdfHeight) pdf.addPage();
-        //         }
-        //     }
+            if (pdfHeight <= pdf.internal.pageSize.getHeight()) {
+                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            } else {
+                let position = 0;
+                while (position < pdfHeight) {
+                    pdf.addImage(
+                        imgData,
+                        "PNG",
+                        0,
+                        position === 0 ? 0 : -position,
+                        pdfWidth,
+                        pdfHeight
+                    );
+                    position += pdf.internal.pageSize.getHeight();
+                    if (position < pdfHeight) pdf.addPage();
+                }
+            }
     
-        //     pdf.save("lich_trinh.pdf");
-        // } catch (err) {
-        //     console.error("Error generating PDF:", err);
-        // } finally {
-        //     setLoading(false);
-        // }
+            pdf.save("lich_trinh.pdf");
+        } catch (err) {
+            console.error("Error generating PDF:", err);
+        } finally {
+            setLoading(false);
+        }
     };
     
 
-    // if (isShare) {
-    //     return (
-    //         <>
-    //         </>
-    //     )
-    // }
+    if (isShare) {
+        return (
+            <>
+            </>
+        )
+    }
 
     return (
         <Box sx={{
@@ -171,7 +168,7 @@ export default function TripButtonGroup({ isMobile, target }: any) {
                     paddingTop: '14px',
                     paddingBottom: '14px'
                 }} 
-                // startIcon={<DownLoadIcon />} onClick={handleDownload}
+                startIcon={<DownLoadIcon />} onClick={handleDownload}
                 >
                     {loading ? <CircularProgress color="primary" /> : 'DOWLOAD SCHEDULE'}</Button>
             </Box>

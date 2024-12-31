@@ -23,9 +23,9 @@ export default function Experience({experiences,imgs}: any){
                 justifyContent: 'space-between',
                 marginTop:'32px',
             }}>
-                <ExprienceItem header={"For the Body"} content={experiences?.forTheBody}  img={imgs[0]} />
-                <ExprienceItem header={"For the Mind"} content={experiences?.forTheMind} img={imgs[1]}/>
-                <ExprienceItem header={"For the Soul"} content={experiences?.forTheSoul} img={imgs[2]}/>
+                <ExprienceItem header={"For the Body"} content={experiences?.forTheBody}  img={imgs? imgs[0]:''} />
+                <ExprienceItem header={"For the Mind"} content={experiences?.forTheMind} img={imgs? imgs[1]:''}/>
+                <ExprienceItem header={"For the Soul"} content={experiences?.forTheSoul} img={imgs? imgs[2]:''}/>
             </Box>
         </Box>
     )
