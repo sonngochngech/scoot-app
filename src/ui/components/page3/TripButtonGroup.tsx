@@ -5,12 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 // import { saveTripData } from "../../../libs/slices/fengShuiSlice";
 import { ShareUri } from "../../../assets/api";
 import { useEffect, useState } from "react";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+
 import { saveTripData } from "../../../libs/slices/fengShuiSlice";
 
+import generatePDF from "react-to-pdf";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
-export default function TripButtonGroup({ isMobile, target }: any) {
+
+export default function TripButtonGroup({ isMobile, target,toPdf }: any) {
 
     const storedTripInfo = localStorage.getItem('tripInfo');
     const storedUserInfo = localStorage.getItem('userInfo');
@@ -47,85 +50,16 @@ export default function TripButtonGroup({ isMobile, target }: any) {
     //     navigator.clipboard.writeText(shareLink);
     // }
 
-    const handleDownload = async () => {
-        try {
+    const handleDownload =async() => {
+        try{
             setLoading(true);
-    
-            const canvases = [];
-            let totalHeight = 0;
-            const elements = document.querySelectorAll("body > *");
-    
-            const elementsArray = Array.from(elements);
-    
-            for (const element of elementsArray) {
-                const boundingRect = (element as HTMLElement).getBoundingClientRect();
-    
-                // Kiểm tra nếu phần tử có kích thước hợp lệ
-                if (boundingRect.width === 0 || boundingRect.height === 0) {
-                    console.warn("Bỏ qua phần tử với kích thước 0:", element);
-                    continue;
-                }
-    
-                try {
-                    const canvas = await html2canvas(element as HTMLElement, {
-                        scale: 2, 
-                        useCORS: true, 
-                    });
-                    canvases.push(canvas);
-                    totalHeight += canvas.height;
-                } catch (canvasError) {
-                    console.error("Lỗi khi tạo canvas cho phần tử:", element, canvasError);
-                }
-            }
-    
-            if (canvases.length === 0) {
-                console.error("Không có canvas hợp lệ được tạo.");
-                return;
-            }
-    
-            const combinedCanvas = document.createElement("canvas");
-            const ctx = combinedCanvas.getContext("2d");
-    
-            combinedCanvas.width = canvases[0].width;
-            combinedCanvas.height = totalHeight;
-    
-            let currentHeight = 0;
-            canvases.forEach((canvas) => {
-                ctx?.drawImage(canvas, 0, currentHeight);
-                currentHeight += canvas.height;
-            });
-    
-            const imgData = combinedCanvas.toDataURL("image/png");
-            const pdf = new jsPDF("p", "mm", "a4");
-    
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (combinedCanvas.height * pdfWidth) / combinedCanvas.width;
-    
-            if (pdfHeight <= pdf.internal.pageSize.getHeight()) {
-                pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-            } else {
-                let position = 0;
-                while (position < pdfHeight) {
-                    pdf.addImage(
-                        imgData,
-                        "PNG",
-                        0,
-                        position === 0 ? 0 : -position,
-                        pdfWidth,
-                        pdfHeight
-                    );
-                    position += pdf.internal.pageSize.getHeight();
-                    if (position < pdfHeight) pdf.addPage();
-                }
-            }
-    
-            pdf.save("lich_trinh.pdf");
-        } catch (err) {
-            console.error("Error generating PDF:", err);
-        } finally {
+        await toPdf();
+        }catch(err){
+            console.log(err);
+        }finally{
             setLoading(false);
         }
-    };
+    }
     
 
     if (isShare) {
@@ -160,17 +94,20 @@ export default function TripButtonGroup({ isMobile, target }: any) {
                 >
                     {isShareLoading ? <CircularProgress size="24px" /> : 'SHARE SCHEDULE'} </Button>
 
-                <Button variant="contained" sx={{
-                    backgroundColor: colors.extentYellow,
-                     color: 'black',
-                    width: isMobile ? '100%' : '332px',
-                    borderRadius: '32px',
-                    paddingTop: '14px',
-                    paddingBottom: '14px'
-                }} 
-                startIcon={<DownLoadIcon />} onClick={handleDownload}
-                >
-                    {loading ? <CircularProgress color="primary" /> : 'DOWLOAD SCHEDULE'}</Button>
+                        <Button variant="contained" sx={{
+                            backgroundColor: colors.extentYellow,
+                            color: 'black',
+                            width: isMobile ? '100%' : '332px',
+                            borderRadius: '32px',
+                            paddingTop: '14px',
+                            paddingBottom: '14px'
+                        }} 
+                        startIcon={<DownLoadIcon />} onClick={handleDownload}
+                        >
+                            {loading ? <CircularProgress color="primary" /> : 'DOWLOAD SCHEDULE'}</Button>
+              
+          
+                
             </Box>
 
             <Box sx={{

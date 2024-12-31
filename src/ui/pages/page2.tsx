@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Slider, Box, Grid, Typography, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
+import { Slider, Box, Grid, Typography, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery, Skeleton } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +12,7 @@ import { getFengShuiPrediction, getTripPlanning } from "../../libs/slices/fengSh
 import { validateImage } from "../../services";
 import { useNavigate } from "react-router";
 import { json } from "stream/consumers";
+import Swal from "sweetalert2";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -72,6 +73,7 @@ export const Page2 = () => {
         }
     },[data])
 
+   
 
 
     const mapData=async (data:any)=>{
@@ -145,7 +147,7 @@ export const Page2 = () => {
         const arrival=renderData?.recommentPlaces[isChoosenPosition];
         const data: TripInfoTypePayLoad = {
         duration: jsonUserInfo?.tripInfo?.duration,
-        budget: budget*1000000,
+        budget: budget,
         arrival: {
             code : arrival.code,
             name: arrival.placeName
@@ -163,6 +165,19 @@ export const Page2 = () => {
         navigate('/page3');
 
     };
+    if(error){
+        Swal.fire({
+            icon: "warning",
+            confirmButtonText: "Đồng ý",
+            title: "<strong>Thông báo</strong>",
+            text: error,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigate("/");
+            }
+        });
+    }
+
 
     return (
         <Box>
@@ -332,8 +347,8 @@ export const Page2 = () => {
                         </Typography>
                     </Grid>
                 </Grid>
-
-                {renderData?.recommentPlaces?.map((place:any, place_idx:number) => (
+                {loading? <Skeleton variant="rectangular" height={40} />
+                : renderData?.recommentPlaces?.map((place:any, place_idx:number) => (
                     <Box
                         sx={{
                             marginBottom: {
@@ -851,6 +866,8 @@ export const Page2 = () => {
                         </Box>
                     </Box>
                 ))}
+
+              
             </Box>
         </Box>
     )

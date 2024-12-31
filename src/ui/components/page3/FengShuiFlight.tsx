@@ -16,7 +16,17 @@ export default function FengShuiFlight({ isMobile }: any) {
     }
     return (
         <>
-        <Typography sx={{...buildVariant(600,'40','56'), textAlign:'center'}}  >Gợi ý giờ xuất hành may mắn</Typography>
+            <Box>
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <Box component={'img'} src="/page3/header1.svg" sx={{ width: '96px', height: '132px' }} />
+                </Box>
+                <Typography sx={{ ...buildVariant(600, '40', '56'), textAlign: 'center' }}  >THE BEST TIMING</Typography>
+                <Typography sx={{ ...buildVariant(600, '40', '56'), textAlign: 'center' }}  >FOR THE BEST OF LUCK</Typography>
+            </Box>
             <Box sx={{
                 background: colors.white,
                 borderRadius: '16px',
@@ -24,7 +34,7 @@ export default function FengShuiFlight({ isMobile }: any) {
                 border: '2px #DC437A solid',
             }}>
                 <Box sx={{
-                    backgroundColor:colors.extentPink,
+                    backgroundColor: colors.extentPink,
                     color: colors.white,
                     borderRadius: '16px 16px 0 0',
                     padding: '16px',
@@ -34,7 +44,7 @@ export default function FengShuiFlight({ isMobile }: any) {
                         gap: '8px',
                         flexDirection: 'row',
                         alignItems: 'center',
-                        
+
 
                     }}>
 
@@ -49,7 +59,7 @@ export default function FengShuiFlight({ isMobile }: any) {
                     flexDirection: 'row',
                     overflowX: 'auto',
                     padding: '16px',
-                    gap:'16px',
+                    gap: '16px',
                     justifyContent: 'space-between',
 
                 }}>
@@ -60,7 +70,7 @@ export default function FengShuiFlight({ isMobile }: any) {
 
             </Box>
         </>
-        
+
     )
 
 }
@@ -72,7 +82,7 @@ const TicketCard = ({ isMobile }: any) => {
         <Box sx={{ width: '24rem', backgroundColor: colors.white, gap: '0px', borderRadius: '16px 0 16px 0' }}>
             <Box sx={{ backgroundColor: colors.softPink, borderRadius: '16px 16px 0 0', padding: '1rem', width: '22rem' }}>
                 <Typography>Khởi hành: Thứ 2, 17/02</Typography>
-                <Divider sx={{ marginTop:'8px',marginBottom:'8px',backgroundColor:colors.extentPink}}/>
+                <Divider sx={{ marginTop: '8px', marginBottom: '8px', backgroundColor: colors.extentPink }} />
                 <Box sx={{ display: 'flex', gap: '20px', paddingTop: '16px' }}>
                     <img src="/page3/scoot-logo.png" style={{ width: '56px', height: '56px' }} />
                     <Box sx={{
@@ -89,7 +99,7 @@ const TicketCard = ({ isMobile }: any) => {
                     flexDirection: 'row',
                     backgroundColor: colors.white,
                     justifyContent: 'center',
-                    gap:'16px',
+                    gap: '16px',
                     padding: '16px',
                     borderRadius: '16px',
                 }}>
@@ -97,7 +107,7 @@ const TicketCard = ({ isMobile }: any) => {
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
-                        
+
                     }}>
                         <Typography sx={buildVariant(600, '16', '24')}>07:45</Typography>
                         <Typography sx={buildVariant(600, '16', '24')} >07:45</Typography>
@@ -119,7 +129,7 @@ const TicketCard = ({ isMobile }: any) => {
                 <Box sx={{ borderRadius: '0 50% 50% 0', width: '32px', height: '32', background: colors.white }}></Box>
                 <Box sx={{ borderRadius: '50% 0  0 50%', width: '32px', height: '32', background: colors.white }}></Box>
             </Box>
-            <Box sx={{width: '22rem', backgroundColor: colors.softPink, borderRadius: '0 0 16px 16px' }}>
+            <Box sx={{ width: '22rem', backgroundColor: colors.softPink, borderRadius: '0 0 16px 16px' }}>
                 <Box sx={{ top: '31.5px', width: '100%', right: '0px', display: 'flex', justifyContent: 'center', paddingBottom: '16px', paddingTop: '16px' }}>
                     <SeatDialog isMobile={isMobile} />
                 </Box>

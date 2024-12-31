@@ -9,16 +9,16 @@ function Rating({rating}:any){
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [data, setData] = useState<{title: string, rating: number}[]>([]);
 
-    // useEffect(() => {
-    //     if(rating){
+    useEffect(() => {
+        if(rating){
         
-    //         const ratingData= Object.entries(rating).map(([key, value]) => {
-    //             return {title: key, rating: value}
-    //         });
-    //         setData(ratingData);
-    //     }
+            const ratingData= Object.entries(rating).map(([key, value]:[any,any]) => {
+                return {title: key, rating: value}
+            });
+            setData(ratingData);
+        }
         
-    // },[rating]);
+    },[rating]);
     
     return (
         <Box
@@ -38,7 +38,7 @@ function Rating({rating}:any){
                         <Box className='d-flex align-items-center' sx={{
                                 marginRight: '8px'
                              }}>
-                            <img src="/img/star.svg" style={{
+                            <img src="/page3/star.svg" style={{
                                 width:'24px',
                                 height:'24px'
                             }} />

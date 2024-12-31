@@ -8,7 +8,7 @@ function BgBanner({isMobile}:any) {
     
     return (
         <Box sx={{
-            backgroundImage: 'url(/page3/banner-background.png)',
+            backgroundImage:'url(/page3/banner-background.png)',
             backgroundSize: 'cover',
             height: isMobile ? '360px':'25vw',
             width: '100%',

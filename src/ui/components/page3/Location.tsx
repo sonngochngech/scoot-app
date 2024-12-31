@@ -28,6 +28,7 @@ export default function Location({isMobile, itemData, itemImage,title}:any) {
                 slidesPerView={1.2}
                 breakpoints={{
                     900: { slidesPerView: 3 },
+                    600: { slidesPerView: 2 },
                 }}
                 onSwiper={(swiper:SwiperType) => {
                     swiperRef.current = swiper;
