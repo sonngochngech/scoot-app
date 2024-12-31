@@ -523,7 +523,7 @@ export default function FormCustom() {
                                 xs: "13px",
                             },
                             fontWeight: "bold",
-                            marginBottom: "12px",
+                            marginBottom: "20px",
                         }}>
                             Your desired destination
                         </Typography>
@@ -533,66 +533,6 @@ export default function FormCustom() {
                             value={formState.desiredDestination || null}
                             onChange={(e, value) => handleInputChange('desiredDestination', value)}
                             options={cities}
-                        />
-                        <Autocomplete
-                            value={formState.desiredDestination || null}
-                            onChange={(e, value) => handleInputChange('desiredDestination', value)}
-                            size={"small"}
-                            popupIcon={
-                                <img
-                                    src="/page1/ic_down.svg"
-                                    alt="icon"
-                                    style={{
-                                        width: 18,
-                                    }}
-                                />
-                            }
-                            options={cities}
-                            autoHighlight
-                            getOptionLabel={(option) => option.name}
-                            renderOption={(props, option) => {
-                                const { key, ...optionProps } = props;
-                                return (
-                                    <Box
-                                        key={key}
-                                        component="li"
-                                        sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                                        {...optionProps}
-                                    >
-                                        {option.name}
-                                    </Box>
-                                );
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Where to"
-                                    placeholder="Select a city"
-                                    required
-                                    variant="standard"
-                                    sx={{
-                                        "& .MuiInputBase-root": {
-                                            borderRadius: 2.5,
-                                        },
-                                        marginTop: "12px",
-                                    }}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                />
-                            )}
-                            sx={{
-                                "& .MuiAutocomplete-popupIndicator": {
-                                    position: "relative",
-                                    right: "12px",
-                                    zIndex: 1,
-                                },
-                                "& .MuiAutocomplete-endAdornment": {
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "16px",
-                                },
-                            }}
                         />
                     </Grid>
                 </Grid>
