@@ -22,6 +22,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import dayjs, { Dayjs } from 'dayjs';
 import cities from '../../../assets/cities.json';
 import { SavedUserInfo } from "../../../types";
+import CustomAutocomplete from "./CustomAutocomplete";
 
 interface FormState {
     name: string;
@@ -378,7 +379,7 @@ export default function FormCustom() {
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={6} md={2.4}>
-                        <Autocomplete
+                        {/* <Autocomplete
                             value={formState.placeOfBirth || null}
                             onChange={(e, value) => handleInputChange('placeOfBirth', value)}
                             size={"small"}
@@ -436,6 +437,16 @@ export default function FormCustom() {
                                     gap: "16px",
                                 },
                             }}
+                        /> */}
+                        <CustomAutocomplete
+                            label="City"
+                            placeholder="Type to search..."
+                            value={formState.placeOfBirth || null}
+                            onChange={(e, value) => handleInputChange('placeOfBirth', value)}
+                            options={cities}
+                            loadingIcon={
+                                <div style={{ fontSize: "24px", color: "blue" }}>...</div>
+                            }
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
