@@ -1,17 +1,10 @@
-import {
-    Box, Grid, Typography, useMediaQuery,
-} from "@mui/material";
-import React, { useState } from 'react';
+import { Box, useMediaQuery } from "@mui/material";
 import FormCustom from "./FormCustom";
 import { useTheme } from "@mui/material/styles";
 
 export default function Landing() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const [budget, setBudget] = useState(250);
-    const handleBudgetChange = (event: Event, newValue: number | number[]) => {
-        setBudget(newValue as number);
-    };
 
     return (
         <Box>

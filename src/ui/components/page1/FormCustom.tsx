@@ -9,6 +9,8 @@ import {
     Checkbox,
 } from "@mui/material";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -18,7 +20,8 @@ import CustomSingleInputDateRangeField from './CustomSingleInputDateRangeField';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Autocomplete from "@mui/material/Autocomplete";
 import dayjs, { Dayjs } from 'dayjs';
-import cities from './cities.json';
+import cities from '../../../assets/cities.json';
+import { SavedUserInfo } from "../../../types";
 
 interface FormState {
     name: string;
@@ -26,7 +29,7 @@ interface FormState {
     email: string;
     dateOfBirth: Dayjs | null;
     timeOfBirth: Dayjs | null;
-    placeOfBirth: string;
+    placeOfBirth: { name: string; code: string } | null;
     placeTravel: string;
     travelingFrom: { name: string; code: string } | null;
     timeRange: [Dayjs | null, Dayjs | null];
@@ -43,8 +46,13 @@ const getInitialState = (): FormState => {
                 phone: parsedState.phone || '',
                 email: parsedState.email || '',
                 dateOfBirth: parsedState.dateOfBirth ? dayjs(parsedState.dateOfBirth) : null,
-                timeOfBirth: parsedState.timeOfBirth ? dayjs(parsedState.timeOfBirth) : null,
-                placeOfBirth: parsedState.placeOfBirth || '',
+                timeOfBirth: parsedState.timeOfBirth
+                    ? dayjs().startOf('day').hour(parseInt(parsedState.timeOfBirth.split(':')[0], 10))
+                        .minute(parseInt(parsedState.timeOfBirth.split(':')[1], 10))
+                    : null,
+                placeOfBirth: parsedState.placeOfBirth && parsedState.placeOfBirth.name && parsedState.placeOfBirth.code
+                    ? { name: parsedState.placeOfBirth.name, code: parsedState.placeOfBirth.code }
+                    : null,
                 placeTravel: parsedState.placeTravel || '',
                 travelingFrom: parsedState.travelingFrom && parsedState.travelingFrom.name && parsedState.travelingFrom.code
                     ? { name: parsedState.travelingFrom.name, code: parsedState.travelingFrom.code }
@@ -65,7 +73,7 @@ const getInitialState = (): FormState => {
             email: '',
             dateOfBirth: null,
             timeOfBirth: null,
-            placeOfBirth: '',
+            placeOfBirth: null,
             placeTravel: '',
             travelingFrom: null,
             timeRange: [null, null],
@@ -78,7 +86,7 @@ const getInitialState = (): FormState => {
         email: '',
         dateOfBirth: null,
         timeOfBirth: null,
-        placeOfBirth: '',
+        placeOfBirth: null,
         placeTravel: '',
         travelingFrom: null,
         timeRange: [null, null],
@@ -96,7 +104,9 @@ export default function FormCustom() {
                 JSON.stringify({
                     ...formState,
                     dateOfBirth: formState.dateOfBirth?.format('YYYY-MM-DD') || null,
-                    timeOfBirth: formState.timeOfBirth?.format('HH:mm') || null,
+                    timeOfBirth: formState.timeOfBirth
+                        ? `${formState.timeOfBirth.format('HH')}:${formState.timeOfBirth.format('mm')}`
+                        : null,
                     timeRange: [
                         formState.timeRange[0]?.format('YYYY-MM-DD') || null,
                         formState.timeRange[1]?.format('YYYY-MM-DD') || null,
@@ -117,6 +127,45 @@ export default function FormCustom() {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+
+        const startDate = formState.timeRange[0] || dayjs();
+        const endDate = formState.timeRange[1] || startDate;
+        const luckyTravelInfor: SavedUserInfo = {
+            userInfo: {
+                name: formState.name,
+                email: formState.email,
+                birthdate: `${Number(formState.timeOfBirth?.get("year"))}-${Number(formState.timeOfBirth?.get("month"))}-${Number(formState.timeOfBirth?.get("date"))}`,
+                domestic: formState.placeTravel === "domestic" ? 0 : 1,
+                phone: formState.phone,
+                timeOfBirth: `${Number(formState.timeOfBirth?.get("hour"))}:${Number(formState.timeOfBirth?.get("minute"))}`,
+                placeOfBirth: formState.placeOfBirth,
+            },
+            departureCity: formState.travelingFrom,
+            arrivalCity: formState.desiredDestination,
+            tripInfo: {
+                duration: Math.abs(endDate.diff(startDate, "day")),
+                startDate: `${Number(formState.timeRange[0]?.get("year"))}-${Number(formState.timeRange[0]?.get("month"))}-${Number(formState.timeRange[0]?.get("date"))}`,
+                endDate: `${Number(formState.timeRange[1]?.get("year"))}-${Number(formState.timeRange[1]?.get("month"))}-${Number(formState.timeRange[1]?.get("date"))}`,
+                departure: formState.travelingFrom,
+            }
+        };
+
+        // const payload: UserInfoTypePayLoad = {
+        //     userInfo: { ...luckyTravelInfor.userInfo, placeOfBirth: birthPlace?.code },
+        //     departureCity: fromPlace?.code,
+        //     arrivalCity: toPlace?.code
+        // }
+
+        localStorage.setItem("userInfo", JSON.stringify(luckyTravelInfor));
+
+        // dispatch(getFengShuiPrediction(payload) as any);
+        navigate('/trip');
+    }
 
     return (
         <Box>
@@ -279,7 +328,7 @@ export default function FormCustom() {
                                                 borderRadius: 2.5,
                                                 height: "40px",
                                                 placeholder: "dd/mm/yyyy",
-                                                "& .MuiSvgIcon-root": { display: 'none' }
+                                                // "& .MuiSvgIcon-root": { display: 'none' }
                                             },
                                         },
                                         sx: {
@@ -313,7 +362,7 @@ export default function FormCustom() {
                                                 borderRadius: 2.5,
                                                 height: "40px",
                                                 placeholder: "hh:mm",
-                                                "& .MuiSvgIcon-root": { display: 'none' },
+                                                // "& .MuiSvgIcon-root": { display: 'none' },
                                             },
                                         },
                                         sx: {
@@ -329,16 +378,64 @@ export default function FormCustom() {
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={6} md={2.4}>
-                        <TextField
-                            required
-                            id="place-of-birth"
-                            label="Place of birth"
-                            placeholder="Your place of birth"
-                            variant="standard"
-                            InputLabelProps={{ shrink: true }}
-                            fullWidth
-                            value={formState.placeOfBirth}
-                            onChange={(e) => handleInputChange('placeOfBirth', e.target.value)}
+                        <Autocomplete
+                            value={formState.placeOfBirth || null}
+                            onChange={(e, value) => handleInputChange('placeOfBirth', value)}
+                            size={"small"}
+                            popupIcon={
+                                <img
+                                    src="/page1/ic_down.svg"
+                                    alt="icon"
+                                    style={{
+                                        width: 18,
+                                    }}
+                                />
+                            }
+                            options={cities}
+                            autoHighlight
+                            getOptionLabel={(option) => option.name}
+                            renderOption={(props, option) => {
+                                const { key, ...optionProps } = props;
+                                return (
+                                    <Box
+                                        key={key}
+                                        component="li"
+                                        sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                                        {...optionProps}
+                                    >
+                                        {option.name}
+                                    </Box>
+                                );
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Place of birth"
+                                    placeholder="Your place of birth"
+                                    required
+                                    variant="standard"
+                                    sx={{
+                                        "& .MuiInputBase-root": {
+                                            borderRadius: 2.5,
+                                        },
+                                    }}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+                            )}
+                            sx={{
+                                "& .MuiAutocomplete-popupIndicator": {
+                                    position: "relative",
+                                    right: "12px",
+                                    zIndex: 1,
+                                },
+                                "& .MuiAutocomplete-endAdornment": {
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "16px",
+                                },
+                            }}
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
@@ -586,6 +683,7 @@ export default function FormCustom() {
                     </Grid>
                 </Grid>
                 <Button
+                    onClick={handleSubmit}
                     type="submit"
                     variant="contained"
                     fullWidth
