@@ -38,7 +38,6 @@ const getInitialState = (): FormState => {
         const storedState = localStorage.getItem('formState');
         if (storedState) {
             const parsedState = JSON.parse(storedState);
-            console.log(parsedState.timeOfBirth);
             return {
                 name: parsedState.name || '',
                 phone: parsedState.phone || '',
