@@ -9,6 +9,7 @@ import { Swiper as SwiperType } from 'swiper/types';
 export default function Location({isMobile, itemData, itemImage,title}:any) {
     const [data, setData] = useState(itemData);
    const swiperRef = useRef<SwiperType|null>();
+  
 
 
     return (

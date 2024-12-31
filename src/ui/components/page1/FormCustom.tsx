@@ -19,6 +19,9 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Autocomplete from "@mui/material/Autocomplete";
 import dayjs, { Dayjs } from 'dayjs';
 import cities from './cities.json';
+import { useDispatch } from "react-redux";
+import { getFengShuiPrediction } from "../../../libs/slices/fengShuiSlice";
+import { useNavigate } from "react-router";
 
 interface FormState {
     name: string;
@@ -88,6 +91,8 @@ const getInitialState = (): FormState => {
 
 export default function FormCustom() {
     const [formState, setFormState] = useState<FormState>(getInitialState);
+    const dispatch=useDispatch();
+    const navigate=useNavigate();
 
     useEffect(() => {
         try {
@@ -114,6 +119,28 @@ export default function FormCustom() {
             [field]: value,
         }));
     };
+
+    const handleSubmit=()=>{
+        const data={
+            userInfo: {
+              "name": "Nguyen Van A",
+              "birthdate": "1990-01-01",
+              "sex": 1,
+              "timeOfBirth": "10:30",
+              "placeOfBirth": "HN-VN",
+              "phone": "0123456789"
+            },
+            departureCity: "HN-VN",
+            arrivalCity: "NY-US"
+        }
+        console.log("data",data);
+        console.log(data);  
+
+        localStorage.setItem('userInfo', JSON.stringify(data["userInfo"]));
+        dispatch(getFengShuiPrediction({data: data}) as any);
+        navigate('/trip');
+        
+    }
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -617,6 +644,7 @@ export default function FormCustom() {
                             xs: "-10px",
                         },
                     }}
+                    onClick={handleSubmit}
                 >
                     EXPLORE NOW
                 </Button>

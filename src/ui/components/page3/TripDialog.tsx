@@ -145,14 +145,21 @@ export default function TripDialog({ isMobile, day, realDay }: any) {
 
     return (
         <>
-            <Typography sx={{ textAlign: 'center', color: colors.blue }} onClick={handleClickOpen} > Chỉnh sửa</Typography>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '16px',
+            }}>
+            <Button variant="contained" sx={{ backgroundColor: colors.black, color: colors.white ,borderRadius:'32px',padding:'16px'}} onClick={handleClickOpen} > VIEW LUCKY SEAT NUMBER</Button>
+            </Box>
+            
             <CustomDialog open={open} fullWidth={true}>
                 <DialogTitle>
                     <Box sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
                     }}>
-                        <Typography sx={buildVariant(600, '24', '32')}>Xây dựng lịch trình</Typography>
+                        <Typography sx={buildVariant(600, '24', '32')}>Create a day's itinerary</Typography>
                         <ClearIcon onClick={handleClose} />
                     </Box>
                 </DialogTitle>
@@ -217,9 +224,9 @@ export default function TripDialog({ isMobile, day, realDay }: any) {
                             </Grid2>
                             <SortableContext items={items.sortable1} strategy={verticalListSortingStrategy}>
                                 <Grid2 size={{ xs: 12, md: 6 }} sx={{ backgroundColor: 'white', padding: '16px' }}>
-                                    <Typography sx={buildVariant(600, '20', '28')}>Danh sách địa điểm</Typography>
+                                    <Typography sx={buildVariant(600, '20', '28')}>Destinations list</Typography>
                                     <Box>
-                                        <Typography sx={buildVariant(600, '14', '24', '#DA0530')}>Xây dựng lịch trình trong ngày bằng cách kéo thả các địa điểm được gợi ý</Typography>
+                                        <Typography sx={buildVariant(600, '14', '24', '#838383')}>Create a daily itinerary by dragging and dropping suggested destinations</Typography>
                                     </Box>
                                     <List sx={{
                                         maxHeight: '450px',
@@ -277,8 +284,8 @@ export default function TripDialog({ isMobile, day, realDay }: any) {
                         padding: '16px',
                         width: '100%',
                     }}>
-                        <Button variant="text" sx={{ color: '#2D43CA', marginRight: '16px' }} onClick={handleClose}>Trở lại</Button>
-                        <Button variant="contained" sx={{ backgroundColor: '#2D43CA', color: '#FFFFFF' }} onClick={handleSavedItinerary}>Lưu lịch trình</Button>
+                        <Button variant="text" sx={{ color: colors.black, marginRight: '16px' }} onClick={handleClose}>RETURN</Button>
+                        <Button variant="contained" sx={{ backgroundColor: colors.black, color: colors.white ,borderRadius:'16px',padding:'16px'}}  onClick={handleSavedItinerary} > SAVE SCHEDULE</Button>
                     </Box>
 
 

@@ -122,18 +122,18 @@ export function BdBreakdown({isMobile,budget}:any) {
     ];
     const  [data,setData]=useState<Budget[]>(igData)
     
-    // useEffect(()=>{
-    //     if(budget){
-    //         const budgetData=Object.entries(budget).map(([key,value])=>{
-    //             return {content: value.description,price: value.price}
-    //         }
-    //     )
-    //     setData(data.map((item,index)=>{
-    //         return {...item,content: budgetData[index].content,price: budgetData[index].price}
-    //     }));
-    //     }
+    useEffect(()=>{
+        if(budget){
+            const budgetData=igData?.map((item:any)=>{
+                return {price: budget[item.title.toLowerCase()]}
+            })
+            console.log(budgetData);
+        setData(data.map((item,index)=>{  
+            return {...item,price: budgetData[index]?.price}
+        }));
+        }
         
-    // },[budget])
+    },[budget])
     return (
         <Box sx={boxStyle}>
             <Box sx={subBoxStyle}>

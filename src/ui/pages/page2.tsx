@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { Slider, Box, Grid, Typography, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import BackIcon from "../components/page2/BackIcon";
+import { SavedUserInfo, TripInfoTypePayLoad, UserInfoTypePayLoad } from "../../types";
 import "swiper/css";
 import { styled } from '@mui/material/styles';
+import { getFengShuiPrediction, getTripPlanning } from "../../libs/slices/fengShuiSlice";
+import { validateImage } from "../../services";
+import { useNavigate } from "react-router";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -20,11 +26,124 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export const Page2 = () => {
     const [budget, setBudget] = useState<number>(0);
+    const navigate=useNavigate();
     const handleBudgetChange = (_: Event, newValue: number | number[]) => {
         setBudget(newValue as number);
     };
 
-    const data = {
+    const dispatch = useDispatch();
+    const [renderData, setRenderData] = useState<any>(null);
+    const { loading, error, prediction: data } = useSelector((state: any) => state.fengShui);
+    const jsonUserInfo: SavedUserInfo = localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo") as string)
+      : null;
+  
+    const getLuckyTravel = (data: any) => {
+      dispatch(getFengShuiPrediction(data) as any);
+    };
+  
+    useEffect(() => {
+    //   if (data === null && jsonUserInfo) {
+    //     console.log("oooooo");
+    //     const payload: UserInfoTypePayLoad = {
+    //       userInfo: { ...jsonUserInfo.userInfo, placeOfBirth: jsonUserInfo?.userInfo?.placeOfBirth?.code },
+    //       departureCity: jsonUserInfo?.departureCity?.code,
+    //       arrivalCity: jsonUserInfo?.arrivalCity?.code,
+    //     };
+    //     if (payload) {
+    //       getLuckyTravel(payload);
+    //     }
+    //   }
+      if (data === null && jsonUserInfo) {
+        console.log("oooooo");
+        const payload: UserInfoTypePayLoad = {
+            userInfo: {
+              "name": "Nguyen Van A",
+              "birthdate": "1990-01-01",
+              "sex": 1,
+              "timeOfBirth": "10:30",
+              "placeOfBirth": "HN-VN",
+              "phone": "0123456789"
+            },
+            departureCity: "HN-VN",
+            arrivalCity: "NY-US"
+        };
+        if (payload) {
+          getLuckyTravel(payload);
+        }
+      }
+    }, []);
+
+    useEffect(()=>{
+        if(data){
+            console.log(data);
+            mapData(data).then((result)=>{
+                setRenderData(result);
+            })
+        }
+    },[data])
+
+
+
+    const mapData=async (data:any)=>{
+        const {start, enhancePart} = seperateText(data?.comment);
+        const recommendedPlaces = await convertRecommendedPlaces(data?.arrivalCity, data?.suggestedCities);
+        const result = {
+            name: jsonUserInfo?.userInfo?.name||'zo zo',
+            dateOfBirth: jsonUserInfo?.userInfo?.birthdate ||'zo zo ',
+            detailFengShui:start,
+            recommentFengShui: enhancePart,
+            recommentPlaces: recommendedPlaces
+        };
+        return result;
+
+    }
+    const seperateText=(text: string)=>{
+        const splitPoint = text.indexOf("To enhance");
+        const start = text.slice(0, splitPoint).trim();
+        const enhancePart = text.slice(splitPoint).trim();
+        return {start, enhancePart};
+    }
+
+    const convertRecommendedPlaces=async (arrivalCity: any,suggestedCities:any )=>{
+        console.log("convertRecommendedPlaces");
+        console.log(arrivalCity);
+        console.log(suggestedCities);
+        const recommendedPlaces = [];
+        const validArivalImages= await validateImage(arrivalCity.images);
+        const validArivalImage = validArivalImages ? validArivalImages[0] : "";
+
+        const validSuggestedImages = await Promise.all(suggestedCities.map(async (city: any) => {
+            const validImages = await validateImage(city.images);
+            return validImages ? validImages[0] : "";
+        }));
+
+        recommendedPlaces.push({
+            placeName: arrivalCity.name,
+            img: validArivalImage,
+            description: [
+                arrivalCity.reason[0]["description"],
+                arrivalCity.reason[1]["description"],
+                arrivalCity.reason[2]["description"],
+            ],
+        });
+        suggestedCities.forEach((city:any, index:number)=>{
+            recommendedPlaces.push({
+                placeName: city.name,
+                img: validSuggestedImages[index] ? validSuggestedImages[index] : "",
+                description: [
+                    city.reason[0]["description"],
+                    city.reason[1]["description"],
+                    city.reason[2]["description"],
+                ],
+            });
+        });
+        console.log("RecommendedPlaces");
+        console.log(recommendedPlaces);
+        return recommendedPlaces;
+    }
+
+    const previousdata = {
         name: "Nguyễn Mai Anh",
         dateOfBirth: "08/08/2000",
         detailFengShui: `According to Feng Shui Bazi, you have a <span style="font-weight: bold;">Metal element</span> and a <span style="font-weight: bold;">Water deficiency</span>. <span style="font-weight: bold;">Your strengths</span> lie in intelligence and excellent communication skills. <span style="font-weight: bold;">However</span>, you may easily be swayed by emotions, leading to stress and mental fatigue.`,
@@ -65,6 +184,25 @@ export const Page2 = () => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const handleGetTrip = (index:any) => {
+        const arrival=renderData?.recommentPlaces[index];
+    
+    
+    const data: TripInfoTypePayLoad = {
+      duration: jsonUserInfo?.tripInfo?.duration,
+      budget: budget*1000000,
+      arrival: arrival,
+      departure: jsonUserInfo?.tripInfo?.departure,
+      travelerQuantities: 4,
+      startDate: jsonUserInfo?.tripInfo?.startDate,
+      endDate: jsonUserInfo?.tripInfo?.startDate,
+      arrivalImg: arrival.img,
+    }
+    localStorage.setItem('tripInfo', JSON.stringify(data));
+    dispatch(getTripPlanning(data) as any);
+    navigate('/page3');
+
+    };
 
     return (
         <Box>
@@ -142,7 +280,7 @@ export const Page2 = () => {
                                 xs: 0,
                             },
                         }}>
-                            For our customer {data.name}, born on {data.dateOfBirth}
+                            For our customer {renderData?.name}, born on {renderData?.dateOfBirth}
                         </Typography>
                         <Typography
                             sx={{
@@ -156,7 +294,7 @@ export const Page2 = () => {
                                     xs: 0,
                                 },
                             }}
-                            dangerouslySetInnerHTML={{ __html: data.detailFengShui }}
+                            dangerouslySetInnerHTML={{ __html: renderData?.detailFengShui }}
                         />
                         <Typography
                             sx={{
@@ -170,7 +308,7 @@ export const Page2 = () => {
                                     xs: 0,
                                 },
                             }}
-                            dangerouslySetInnerHTML={{ __html: data.recommentFengShui }}
+                            dangerouslySetInnerHTML={{ __html: renderData?.recommentFengShui }}
                         />
                     </Grid>
                     {!isMobile &&
@@ -235,7 +373,7 @@ export const Page2 = () => {
                     </Grid>
                 </Grid>
 
-                {data.recommentPlaces.map((place, place_idx) => (
+                {renderData?.recommentPlaces?.map((place:any, place_idx:number) => (
                     <Box
                         sx={{
                             marginBottom: {
@@ -713,6 +851,7 @@ export const Page2 = () => {
                                                                         xs: "14px",
                                                                     },
                                                                 }}
+                                                                onClick={handleGetTrip}
                                                             >
                                                                 View Trip Schedule
                                                             </Button>

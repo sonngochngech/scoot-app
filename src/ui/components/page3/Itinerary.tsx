@@ -14,12 +14,13 @@ import { validateImage } from "../../../services";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import TripDialog from "./TripDialog";
+import usePlanningData from "../../../hooks/usePlanningData";
 
 export default function Itinerary({  itineraries }: any) {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const isShare=false;
+    
 
 
     return (
@@ -46,6 +47,7 @@ export default function Itinerary({  itineraries }: any) {
 const ItineraryItem = ({ isMobile, item }: any) => {
     // const {isShare: isShare}=useSelector((state:any)=>state.fengShui);
     const [open, setOpen] = useState(true);
+    const isShare=false;
 
     const handleClick = () => {
         setOpen(!open);
@@ -89,12 +91,7 @@ const ItineraryItem = ({ isMobile, item }: any) => {
 export const Activity = ({ isMobile, id, isInIntinerary, isPop, actions }: any) => {
     const { handleAdd, handleRemove } = actions || {};
 
-    const activity={
-        name:'activity',
-        address:'address',
-        img:['/page3/activity-item.png']
-
-    }
+    const activity = usePlanningData(id);
     // const activity = usePlanningData(id);
     // const [isValidImage,setIsValidImage]=useState(activity?.img[0]);
 
@@ -140,8 +137,8 @@ export const Activity = ({ isMobile, id, isInIntinerary, isPop, actions }: any) 
                     </Box>
                 </Box>
             </Box>
-            {/* {isPop && (isMobile && !isInIntinerary) && handleAdd && <SumIcon onClick={() => handleAdd(id)} />}
-            {isPop && (isInIntinerary || !isMobile) && <ShiftIcon />} */}
+            {isPop && (isMobile && !isInIntinerary) && handleAdd && <SumIcon onClick={() => handleAdd(id)} />}
+            {isPop && (isInIntinerary || !isMobile) && <ShiftIcon />}
 
         </Box>
 

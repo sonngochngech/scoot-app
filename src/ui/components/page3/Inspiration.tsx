@@ -4,7 +4,7 @@ import colors from "./colors";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-export default function Inspiration(){
+export default function Inspiration({wardrobe}: any){
 
     return (
         <Box sx={{
@@ -47,8 +47,8 @@ export default function Inspiration(){
                 justifyContent: 'space-between',
                 marginTop:'32px',
             }}>
-                <ExprienceItem/>
-                <ExprienceItem/>
+                <ExprienceItem title={"Pack Clothing for the Season"} content={wardrobe?.clotheRecommendations} img={"/page3/clothe-item.png"}/>
+                <ExprienceItem title={'Accessory Recommendations'} content={wardrobe?.accessoriesRecommendations} img={"/page3/clothe-1-item.png"}/>
             </Box>
         </Box>
     )
@@ -56,9 +56,7 @@ export default function Inspiration(){
 }
 
 
-const ExprienceItem=()=>{
-    const header="Pack Clothing for the Season";
-    const content="Santorini’s weather in early spring can be mild, with cool evenings. Prepare light layers, and for luck and harmony, wear shades of blue and white—symbolizing Water and Metal elements for balance and clarity.";
+const ExprienceItem=({title,content,img}:any)=>{
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -72,7 +70,7 @@ const ExprienceItem=()=>{
             minWidth:'275px',
 
         }}>
-            <img src="/page3/experience-item.png" style={{
+            <img src={img||''} style={{
                 width:'100%',
                 height: isMobile ?'138px':'206px'
             }}
@@ -83,7 +81,7 @@ const ExprienceItem=()=>{
                 gap: '8px',
                 padding: '16px',
             }}>
-                <Typography sx={buildVariant(600,'20','28')} >{header}</Typography>
+                <Typography sx={buildVariant(600,'20','28')} >{title}</Typography>
                 <Typography>{content}</Typography>
             </Box>
 

@@ -4,7 +4,7 @@ import colors from "./colors";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-export default function Experience(){
+export default function Experience({experiences,imgs}: any){
 
     return (
         <Box sx={{
@@ -23,9 +23,9 @@ export default function Experience(){
                 justifyContent: 'space-between',
                 marginTop:'32px',
             }}>
-                <ExprienceItem/>
-                <ExprienceItem/>
-                <ExprienceItem/>
+                <ExprienceItem header={"For the Body"} content={experiences?.forTheBody}  img={imgs[0]} />
+                <ExprienceItem header={"For the Mind"} content={experiences?.forTheMind} img={imgs[1]}/>
+                <ExprienceItem header={"For the Soul"} content={experiences?.forTheSoul} img={imgs[2]}/>
             </Box>
         </Box>
     )
@@ -33,9 +33,7 @@ export default function Experience(){
 }
 
 
-const ExprienceItem=()=>{
-    const header="Pack Clothing for the Season";
-    const content="Santorini’s weather in early spring can be mild, with cool evenings. Prepare light layers, and for luck and harmony, wear shades of blue and white—symbolizing Water and Metal elements for balance and clarity.";
+const ExprienceItem=({header,content,img}:any)=>{
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -49,9 +47,11 @@ const ExprienceItem=()=>{
             minWidth:'275px',
 
         }}>
-            <img src="/page3/experience-item.png" style={{
+            <img src={img} style={{
                 width:'100%',
-                height: isMobile ?'138px':'206px'
+                height: isMobile ?'138px':'206px',
+                borderTopLeftRadius: '16px',
+                borderTopRightRadius: '16px',
             }}
             ></img>
             <Box sx={{

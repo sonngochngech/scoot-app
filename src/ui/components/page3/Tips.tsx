@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material"
 import { buildVariant } from "./theme";
 import colors from "./colors";
 
-export default function Tips(){
+export default function Tips({location,tips}:any){
     return (
     <Box sx={{
         backgroundImage:'url(/page3/tip.png)',
@@ -27,7 +27,7 @@ export default function Tips(){
             display: 'flex',
             flexDirection: 'column',
         }}>
-            <Typography sx={{...buildVariant(600,'40','48',colors.white)}}>Santorini travel tips</Typography>
+            <Typography sx={{...buildVariant(600,'40','48',colors.white)}}>{location} travel tips</Typography>
             <Box sx={{
                 display: 'flex',
                 gap: '16px',
@@ -38,8 +38,8 @@ export default function Tips(){
                     xs:'auto',
                 }
             }}>
-                {[1,2,3].map((index)=>(
-                    <TipItem/>
+                {tips?.map((item:any,index:number)=>(
+                    <TipItem index={index+1}  header={item?.name} content={item?.description}/>
                 ))}
             </Box>  
         </Box>
@@ -48,10 +48,7 @@ export default function Tips(){
     )
 }
 
-const TipItem=()=>{
-    const index="1";
-    const header="Pack Clothing for the Season";
-    const content="Santorini’s weather in early spring can be mild, with cool evenings. Prepare light layers, and for luck and harmony, wear shades of blue and white—symbolizing Water and Metal elements for balance and clarity.";
+const TipItem=({index,header,content}: any)=>{
     return(
         <Box sx={{
             borderRadius: '16px',

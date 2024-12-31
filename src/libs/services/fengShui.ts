@@ -6,7 +6,9 @@ import { validateImage } from "../../services";
 const getFengShui = async (body: LuckyTravelInfo) => {
 
     try{
+        console.log(body);
         const response = await axios.post(fengShuiAppApi.fengShuiPrediction, body);
+        console.log(response.data);
         return response.data;
     }catch(e:any){
         throw new Error(e?.response?.data?.message);

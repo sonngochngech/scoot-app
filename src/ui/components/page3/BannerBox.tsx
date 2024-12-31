@@ -24,9 +24,9 @@ const BannerBox = ({city,duration}:any) => {
              
             >
                 <Typography  sx={{
-                        fontSize:  '2.5rem',
+                        fontSize:  '40px',
                         fontWeight: 500,
-                        lineHeight: '3rem',
+                        lineHeight: '48px',
                     }}>Lucky Trip to </Typography>
                 <Typography
                     sx={{
@@ -36,7 +36,7 @@ const BannerBox = ({city,duration}:any) => {
                         letterSpacing: '-0.03em',
                     }}
                 >
-                   {city}
+                   {city?.name}
                 </Typography>
             </Box>
             <Box sx={{
