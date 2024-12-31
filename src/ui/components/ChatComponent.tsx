@@ -215,7 +215,7 @@ const Chat = () => {
   }
 
   const handleGreetingClick = () => {
-    botSendMess(`## Welcome! 🚀 \nWe are happy to assist you.\n## Instructions for use: \n1. **Enter phone number**: Verify your information. \n2. **Ask questions**: Ask anything you need help with. \n3. **Exit chat session**: Tap "Exit" to log out of this chat session.\n\n`);
+    botSendMess(`## Welcome! 🚀 \nWe are happy to assist you.\n## Instructions: \n1. **Enter phone number**: Verify your information. \n2. **Ask questions**: Ask anything you need help with. \n3. **Exit chat session**: Tap "Exit" to log out of this chat session.\n\n`);
     setShowGreetingButton(false);
   };
 
@@ -369,7 +369,8 @@ const Chat = () => {
                   <Typography
                     variant="body1"
                     sx={{
-                      lineHeight: 1.2,
+                      lineHeight: 1.5,
+                      hyphens: "auto",
                       overflowWrap: "break-word",
                       wordBreak: "break-word",
                       textAlign: "justify",
