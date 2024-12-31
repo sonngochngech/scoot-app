@@ -9,6 +9,8 @@ import {
     Checkbox,
 } from "@mui/material";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -19,6 +21,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Autocomplete from "@mui/material/Autocomplete";
 import dayjs, { Dayjs } from 'dayjs';
 import cities from '../../../assets/cities.json';
+import { SavedUserInfo } from "../../../types";
 
 interface FormState {
     name: string;
@@ -124,6 +127,45 @@ export default function FormCustom() {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+
+        const startDate = formState.timeRange[0] || dayjs();
+        const endDate = formState.timeRange[1] || startDate;
+        const luckyTravelInfor: SavedUserInfo = {
+            userInfo: {
+                name: formState.name,
+                email: formState.email,
+                birthdate: `${Number(formState.timeOfBirth?.get("year"))}-${Number(formState.timeOfBirth?.get("month"))}-${Number(formState.timeOfBirth?.get("date"))}`,
+                domestic: formState.placeTravel === "domestic" ? 0 : 1,
+                phone: formState.phone,
+                timeOfBirth: `${Number(formState.timeOfBirth?.get("hour"))}:${Number(formState.timeOfBirth?.get("minute"))}`,
+                placeOfBirth: formState.placeOfBirth,
+            },
+            departureCity: formState.travelingFrom,
+            arrivalCity: formState.desiredDestination,
+            tripInfo: {
+                duration: Math.abs(endDate.diff(startDate, "day")),
+                startDate: `${Number(formState.timeRange[0]?.get("year"))}-${Number(formState.timeRange[0]?.get("month"))}-${Number(formState.timeRange[0]?.get("date"))}`,
+                endDate: `${Number(formState.timeRange[1]?.get("year"))}-${Number(formState.timeRange[1]?.get("month"))}-${Number(formState.timeRange[1]?.get("date"))}`,
+                departure: formState.travelingFrom,
+            }
+        };
+
+        // const payload: UserInfoTypePayLoad = {
+        //     userInfo: { ...luckyTravelInfor.userInfo, placeOfBirth: birthPlace?.code },
+        //     departureCity: fromPlace?.code,
+        //     arrivalCity: toPlace?.code
+        // }
+
+        localStorage.setItem("userInfo", JSON.stringify(luckyTravelInfor));
+
+        // dispatch(getFengShuiPrediction(payload) as any);
+        navigate('/trip');
+    }
 
     return (
         <Box>
@@ -641,6 +683,7 @@ export default function FormCustom() {
                     </Grid>
                 </Grid>
                 <Button
+                    onClick={handleSubmit}
                     type="submit"
                     variant="contained"
                     fullWidth
