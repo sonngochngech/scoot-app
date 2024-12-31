@@ -15,25 +15,10 @@ interface CustomAutocompleteProps {
   loadingIcon?: React.ReactNode;
 }
 
-const createSearchWorker = () =>
-  new Worker(
-    URL.createObjectURL(
-      new Blob(
-        [
-          `
-          self.onmessage = function(e) {
-            const { query, options } = e.data;
-            const filtered = options.filter(option =>
-              option.name.toLowerCase().includes(query.toLowerCase())
-            );
-            self.postMessage(filtered);
-          };
-        `,
-        ],
-        { type: "text/javascript" }
-      )
-    )
-  );
+const createSearchWorker = () => {
+  const url = new URL('./worker/a.worker.js', import.meta.url);
+  return new Worker(url, { type: 'module' });
+};
 
 const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
   label,
@@ -42,7 +27,7 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
   options,
   onChange,
 }) => {
-  const [visibleOptions, setVisibleOptions] = useState<Option[]>(options.slice(0, 50)); 
+  const [visibleOptions, setVisibleOptions] = useState<Option[]>(options.slice(0, 50));
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState<string>("");
 
@@ -134,9 +119,9 @@ const CustomAutocomplete: React.FC<CustomAutocompleteProps> = ({
           value={query}
           onChange={handleInputChange}
           sx={{
-            "& .MuiInputBase-root": { borderRadius: 2.5 },
-            "& .MuiInputLabel-root": {
-              marginBottom: "24px",
+            "& .MuiInputBase-root": {
+              borderRadius: 2.5,
+              padding: "7px 0px 5px",
             },
           }}
           InputLabelProps={{ shrink: true }}
