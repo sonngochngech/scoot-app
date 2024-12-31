@@ -18,7 +18,7 @@ import CustomSingleInputDateRangeField from './CustomSingleInputDateRangeField';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import Autocomplete from "@mui/material/Autocomplete";
 import dayjs, { Dayjs } from 'dayjs';
-import cities from './cities.json';
+import cities from '../../../assets/cities.json';
 
 interface FormState {
     name: string;
@@ -26,7 +26,7 @@ interface FormState {
     email: string;
     dateOfBirth: Dayjs | null;
     timeOfBirth: Dayjs | null;
-    placeOfBirth: string;
+    placeOfBirth: { name: string; code: string } | null;
     placeTravel: string;
     travelingFrom: { name: string; code: string } | null;
     timeRange: [Dayjs | null, Dayjs | null];
@@ -38,13 +38,19 @@ const getInitialState = (): FormState => {
         const storedState = localStorage.getItem('formState');
         if (storedState) {
             const parsedState = JSON.parse(storedState);
+            console.log(parsedState.timeOfBirth);
             return {
                 name: parsedState.name || '',
                 phone: parsedState.phone || '',
                 email: parsedState.email || '',
                 dateOfBirth: parsedState.dateOfBirth ? dayjs(parsedState.dateOfBirth) : null,
-                timeOfBirth: parsedState.timeOfBirth ? dayjs(parsedState.timeOfBirth) : null,
-                placeOfBirth: parsedState.placeOfBirth || '',
+                timeOfBirth: parsedState.timeOfBirth
+                    ? dayjs().startOf('day').hour(parseInt(parsedState.timeOfBirth.split(':')[0], 10))
+                        .minute(parseInt(parsedState.timeOfBirth.split(':')[1], 10))
+                    : null,
+                placeOfBirth: parsedState.placeOfBirth && parsedState.placeOfBirth.name && parsedState.placeOfBirth.code
+                    ? { name: parsedState.placeOfBirth.name, code: parsedState.placeOfBirth.code }
+                    : null,
                 placeTravel: parsedState.placeTravel || '',
                 travelingFrom: parsedState.travelingFrom && parsedState.travelingFrom.name && parsedState.travelingFrom.code
                     ? { name: parsedState.travelingFrom.name, code: parsedState.travelingFrom.code }
@@ -65,7 +71,7 @@ const getInitialState = (): FormState => {
             email: '',
             dateOfBirth: null,
             timeOfBirth: null,
-            placeOfBirth: '',
+            placeOfBirth: null,
             placeTravel: '',
             travelingFrom: null,
             timeRange: [null, null],
@@ -78,7 +84,7 @@ const getInitialState = (): FormState => {
         email: '',
         dateOfBirth: null,
         timeOfBirth: null,
-        placeOfBirth: '',
+        placeOfBirth: null,
         placeTravel: '',
         travelingFrom: null,
         timeRange: [null, null],
@@ -96,7 +102,9 @@ export default function FormCustom() {
                 JSON.stringify({
                     ...formState,
                     dateOfBirth: formState.dateOfBirth?.format('YYYY-MM-DD') || null,
-                    timeOfBirth: formState.timeOfBirth?.format('HH:mm') || null,
+                    timeOfBirth: formState.timeOfBirth
+                        ? `${formState.timeOfBirth.format('HH')}:${formState.timeOfBirth.format('mm')}`
+                        : null,
                     timeRange: [
                         formState.timeRange[0]?.format('YYYY-MM-DD') || null,
                         formState.timeRange[1]?.format('YYYY-MM-DD') || null,
@@ -279,7 +287,7 @@ export default function FormCustom() {
                                                 borderRadius: 2.5,
                                                 height: "40px",
                                                 placeholder: "dd/mm/yyyy",
-                                                "& .MuiSvgIcon-root": { display: 'none' }
+                                                // "& .MuiSvgIcon-root": { display: 'none' }
                                             },
                                         },
                                         sx: {
@@ -313,7 +321,7 @@ export default function FormCustom() {
                                                 borderRadius: 2.5,
                                                 height: "40px",
                                                 placeholder: "hh:mm",
-                                                "& .MuiSvgIcon-root": { display: 'none' },
+                                                // "& .MuiSvgIcon-root": { display: 'none' },
                                             },
                                         },
                                         sx: {
@@ -329,16 +337,64 @@ export default function FormCustom() {
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={6} md={2.4}>
-                        <TextField
-                            required
-                            id="place-of-birth"
-                            label="Place of birth"
-                            placeholder="Your place of birth"
-                            variant="standard"
-                            InputLabelProps={{ shrink: true }}
-                            fullWidth
-                            value={formState.placeOfBirth}
-                            onChange={(e) => handleInputChange('placeOfBirth', e.target.value)}
+                        <Autocomplete
+                            value={formState.placeOfBirth || null}
+                            onChange={(e, value) => handleInputChange('placeOfBirth', value)}
+                            size={"small"}
+                            popupIcon={
+                                <img
+                                    src="/page1/ic_down.svg"
+                                    alt="icon"
+                                    style={{
+                                        width: 18,
+                                    }}
+                                />
+                            }
+                            options={cities}
+                            autoHighlight
+                            getOptionLabel={(option) => option.name}
+                            renderOption={(props, option) => {
+                                const { key, ...optionProps } = props;
+                                return (
+                                    <Box
+                                        key={key}
+                                        component="li"
+                                        sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                                        {...optionProps}
+                                    >
+                                        {option.name}
+                                    </Box>
+                                );
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Place of birth"
+                                    placeholder="Your place of birth"
+                                    required
+                                    variant="standard"
+                                    sx={{
+                                        "& .MuiInputBase-root": {
+                                            borderRadius: 2.5,
+                                        },
+                                    }}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+                            )}
+                            sx={{
+                                "& .MuiAutocomplete-popupIndicator": {
+                                    position: "relative",
+                                    right: "12px",
+                                    zIndex: 1,
+                                },
+                                "& .MuiAutocomplete-endAdornment": {
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "16px",
+                                },
+                            }}
                         />
                     </Grid>
                     <Grid item xs={6} md={2.4}>
