@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import { getFengShuiPrediction, getTripPlanning } from "../../libs/slices/fengShuiSlice";
 import { validateImage } from "../../services";
 import { useNavigate } from "react-router";
+import { json } from "stream/consumers";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -43,35 +44,23 @@ export const Page2 = () => {
     };
   
     useEffect(() => {
-    //   if (data === null && jsonUserInfo) {
-    //     console.log("oooooo");
-    //     const payload: UserInfoTypePayLoad = {
-    //       userInfo: { ...jsonUserInfo.userInfo, placeOfBirth: jsonUserInfo?.userInfo?.placeOfBirth?.code },
-    //       departureCity: jsonUserInfo?.departureCity?.code,
-    //       arrivalCity: jsonUserInfo?.arrivalCity?.code,
-    //     };
-    //     if (payload) {
-    //       getLuckyTravel(payload);
-    //     }
-    //   }
       if (data === null && jsonUserInfo) {
-        console.log("oooooo");
         const payload: UserInfoTypePayLoad = {
-            userInfo: {
-              "name": "Nguyen Van A",
-              "birthdate": "1990-01-01",
-              "sex": 1,
-              "timeOfBirth": "10:30",
-              "placeOfBirth": "HN-VN",
-              "phone": "0123456789"
-            },
-            departureCity: "HN-VN",
-            arrivalCity: "NY-US"
+          userInfo: { 
+             name: jsonUserInfo?.userInfo?.name,
+                sex: jsonUserInfo?.userInfo?.sex,
+                phone: jsonUserInfo?.userInfo?.phone,
+                birthdate: jsonUserInfo?.userInfo?.birthdate,
+                timeOfBirth: jsonUserInfo?.userInfo?.timeOfBirth,
+                placeOfBirth: jsonUserInfo?.userInfo?.placeOfBirth?.code },
+                departureCity: jsonUserInfo?.departureCity?.code,
+                 arrivalCity: jsonUserInfo?.arrivalCity?.code,
         };
         if (payload) {
           getLuckyTravel(payload);
         }
       }
+      
     }, []);
 
     useEffect(()=>{
@@ -106,20 +95,18 @@ export const Page2 = () => {
     }
 
     const convertRecommendedPlaces=async (arrivalCity: any,suggestedCities:any )=>{
-        console.log("convertRecommendedPlaces");
-        console.log(arrivalCity);
-        console.log(suggestedCities);
         const recommendedPlaces = [];
         const validArivalImages= await validateImage(arrivalCity.images);
-        const validArivalImage = validArivalImages ? validArivalImages[0] : "";
+        const validArivalImage = validArivalImages ?validArivalImages : [];
 
         const validSuggestedImages = await Promise.all(suggestedCities.map(async (city: any) => {
             const validImages = await validateImage(city.images);
-            return validImages ? validImages[0] : "";
+            return validImages ? validArivalImage : [];
         }));
 
         recommendedPlaces.push({
             placeName: arrivalCity.name,
+            code: arrivalCity.code,
             img: validArivalImage,
             description: [
                 arrivalCity.reason[0]["description"],
@@ -130,6 +117,7 @@ export const Page2 = () => {
         suggestedCities.forEach((city:any, index:number)=>{
             recommendedPlaces.push({
                 placeName: city.name,
+                code: city.code,
                 img: validSuggestedImages[index] ? validSuggestedImages[index] : "",
                 description: [
                     city.reason[0]["description"],
@@ -143,64 +131,36 @@ export const Page2 = () => {
         return recommendedPlaces;
     }
 
-    const previousdata = {
-        name: "Nguyễn Mai Anh",
-        dateOfBirth: "08/08/2000",
-        detailFengShui: `According to Feng Shui Bazi, you have a <span style="font-weight: bold;">Metal element</span> and a <span style="font-weight: bold;">Water deficiency</span>. <span style="font-weight: bold;">Your strengths</span> lie in intelligence and excellent communication skills. <span style="font-weight: bold;">However</span>, you may easily be swayed by emotions, leading to stress and mental fatigue.`,
-        recommentFengShui: `To balance your destiny and invite more luck and joy into your life, it's recommended that you <span style="font-weight: bold;">should travel to the North</span>, visiting places connected to the <span style="font-weight: bold;">sea or rivers</span>. These destinations embody the dynamic, prosperous, and adventurous spirit that aligns with your element. The coastal atmosphere will help <span style="font-weight: bold;">relieve stress and restore emotional balance</span>. Additionally, you'll have the chance to fully absorb the vital energy of nature, drawing in harmonious vibes from the earth and sky.`,
-        recommentPlaces: [
-            {
-                placeName: "Bali, Indonesia",
-                img: "https://media.istockphoto.com/id/944812540/vi/anh/c%E1%BA%A3nh-quan-n%C3%BAi-ponta-delgada-azores.jpg?s=612x612&w=0&k=20&c=_Q2nGyKzOQDYK3FP8WChOfvOZAM0uw5R0t6Oi1WW_gQ=",
-                description: [
-                    "Bali is a destination rich in Water and Wood elements, symbolizing growth, renewal, and emotional healing—perfect for balancing your energy map.",
-                    "Its lush tropical environment and tranquil beaches promote relaxation, emotional harmony, and creative inspiration.",
-                    "Enjoy yoga retreats in Ubud, relax by the ocean at Seminyak Beach, and explore sacred water temples like Tirta Empul for spiritual cleansing.",
-                ],
-            },
-            {
-                placeName: "Bali, Indonesia",
-                img: "https://media.istockphoto.com/id/944812540/vi/anh/c%E1%BA%A3nh-quan-n%C3%BAi-ponta-delgada-azores.jpg?s=612x612&w=0&k=20&c=_Q2nGyKzOQDYK3FP8WChOfvOZAM0uw5R0t6Oi1WW_gQ=",
-                description: [
-                    "Bali is a destination rich in Water and Wood elements, symbolizing growth, renewal, and emotional healing—perfect for balancing your energy map.",
-                    "Its lush tropical environment and tranquil beaches promote relaxation, emotional harmony, and creative inspiration.",
-                    "Enjoy yoga retreats in Ubud, relax by the ocean at Seminyak Beach, and explore sacred water temples like Tirta Empul for spiritual cleansing.",
-                ],
-            },
-            {
-                placeName: "Bali, Indonesia",
-                img: "https://media.istockphoto.com/id/944812540/vi/anh/c%E1%BA%A3nh-quan-n%C3%BAi-ponta-delgada-azores.jpg?s=612x612&w=0&k=20&c=_Q2nGyKzOQDYK3FP8WChOfvOZAM0uw5R0t6Oi1WW_gQ=",
-                description: [
-                    "Bali is a destination rich in Water and Wood elements, symbolizing growth, renewal, and emotional healing—perfect for balancing your energy map.",
-                    "Its lush tropical environment and tranquil beaches promote relaxation, emotional harmony, and creative inspiration.",
-                    "Enjoy yoga retreats in Ubud, relax by the ocean at Seminyak Beach, and explore sacred water temples like Tirta Empul for spiritual cleansing.",
-                ],
-            },
-        ],
-    };
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const handleGetTrip = (index:any) => {
-        const arrival=renderData?.recommentPlaces[index];
-    
-    
-    const data: TripInfoTypePayLoad = {
-      duration: jsonUserInfo?.tripInfo?.duration,
-      budget: budget*1000000,
-      arrival: arrival,
-      departure: jsonUserInfo?.tripInfo?.departure,
-      travelerQuantities: 4,
-      startDate: jsonUserInfo?.tripInfo?.startDate,
-      endDate: jsonUserInfo?.tripInfo?.startDate,
-      arrivalImg: arrival.img,
+    const [isChoosenPosition, setIsChoosenPosition] = useState(0);
+    const handleOpen = (index:any) =>{
+     setOpen(true);
+     setIsChoosenPosition(index);
     }
-    localStorage.setItem('tripInfo', JSON.stringify(data));
-    dispatch(getTripPlanning(data) as any);
-    navigate('/page3');
+    const handleClose = () => setOpen(false);
+    const handleGetTrip = () => {
+        const arrival=renderData?.recommentPlaces[isChoosenPosition];
+        const data: TripInfoTypePayLoad = {
+        duration: jsonUserInfo?.tripInfo?.duration,
+        budget: budget*1000000,
+        arrival: {
+            code : arrival.code,
+            name: arrival.placeName
+        },
+        departure: jsonUserInfo?.tripInfo?.departure,
+        travelerQuantities: 4,
+        startDate: jsonUserInfo?.tripInfo?.startDate,
+        endDate: jsonUserInfo?.tripInfo?.startDate,
+        arrivalImg: arrival.img,
+        arrivalDescription: arrival.description[0],
+        }
+        localStorage.setItem('tripInfo', JSON.stringify(data));
+
+        console.log(data);
+        navigate('/page3');
 
     };
 
@@ -453,7 +413,7 @@ export const Page2 = () => {
                             >
                                 <Box
                                     component="img"
-                                    src={place.img}
+                                    src={place.img[0]}
                                     sx={{
                                         width: "100%",
                                         height: {
@@ -655,7 +615,7 @@ export const Page2 = () => {
                                             xs: "100%",
                                         },
                                     }}
-                                    onClick={handleOpen}
+                                    onClick={()=>handleOpen(place_idx)}
                                 >
                                     I WANT TO KNOW MORE
                                 </Button>
@@ -823,6 +783,7 @@ export const Page2 = () => {
                                                                         xs: "14px",
                                                                     },
                                                                 }}
+                                                                 onClick={handleGetTrip}
                                                             >
                                                                 View Trip Schedule
                                                             </Button>

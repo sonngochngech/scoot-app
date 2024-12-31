@@ -22,9 +22,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import dayjs, { Dayjs } from 'dayjs';
 import cities from '../../../assets/cities.json';
 import { SavedUserInfo } from "../../../types";
-import { useDispatch } from "react-redux";
 import { getFengShuiPrediction } from "../../../libs/slices/fengShuiSlice";
-import { useNavigate } from "react-router";
 
 interface FormState {
     name: string;
@@ -99,7 +97,6 @@ const getInitialState = (): FormState => {
 
 export default function FormCustom() {
     const [formState, setFormState] = useState<FormState>(getInitialState);
-    const dispatch=useDispatch();
     const navigate=useNavigate();
 
     useEffect(() => {
@@ -130,33 +127,8 @@ export default function FormCustom() {
         }));
     };
 
-    const handleSubmit=()=>{
-        const data={
-            userInfo: {
-              "name": "Nguyen Van A",
-              "birthdate": "1990-01-01",
-              "sex": 1,
-              "timeOfBirth": "10:30",
-              "placeOfBirth": "HN-VN",
-              "phone": "0123456789"
-            },
-            departureCity: "HN-VN",
-            arrivalCity: "NY-US"
-        }
-        console.log("data",data);
-        console.log(data);  
-
-        localStorage.setItem('userInfo', JSON.stringify(data["userInfo"]));
-        dispatch(getFengShuiPrediction({data: data}) as any);
-        navigate('/trip');
-        
-    }
-
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
@@ -167,7 +139,7 @@ export default function FormCustom() {
                 name: formState.name,
                 email: formState.email,
                 birthdate: `${Number(formState.timeOfBirth?.get("year"))}-${Number(formState.timeOfBirth?.get("month"))}-${Number(formState.timeOfBirth?.get("date"))}`,
-                domestic: formState.placeTravel === "domestic" ? 0 : 1,
+                sex: formState.placeTravel === "domestic" ? 0 : 1,
                 phone: formState.phone,
                 timeOfBirth: `${Number(formState.timeOfBirth?.get("hour"))}:${Number(formState.timeOfBirth?.get("minute"))}`,
                 placeOfBirth: formState.placeOfBirth,
@@ -189,8 +161,6 @@ export default function FormCustom() {
         // }
 
         localStorage.setItem("userInfo", JSON.stringify(luckyTravelInfor));
-
-        // dispatch(getFengShuiPrediction(payload) as any);
         navigate('/trip');
     }
 
@@ -742,7 +712,6 @@ export default function FormCustom() {
                             xs: "-10px",
                         },
                     }}
-                    onClick={handleSubmit}
                 >
                     EXPLORE NOW
                 </Button>

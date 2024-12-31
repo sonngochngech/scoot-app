@@ -7,7 +7,6 @@ import { Swiper as SwiperType } from 'swiper/types';
 
 
 export default function Location({isMobile, itemData, itemImage,title}:any) {
-    const [data, setData] = useState(itemData);
    const swiperRef = useRef<SwiperType|null>();
   
 
@@ -36,10 +35,8 @@ export default function Location({isMobile, itemData, itemImage,title}:any) {
                  
                 
             >
-                {data?.map((location: any, index: any) => (
+                {itemData?.map((location: any, index: any) => (
                     <SwiperSlide key={`${index}`}
-                    
-                    
                     >
                     <CardItem location={location} isMobile={isMobile} image={itemImage ? itemImage[index]:''} />
                     </SwiperSlide>

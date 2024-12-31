@@ -26,6 +26,7 @@ import { getTripPlanning, setValidImagePlanning } from "../../libs/slices/fengSh
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { SavedUserInfo, TripInfoTypePayLoad } from "../../types";  
+import { json } from 'stream/consumers';
 
 function calculateDuration(startDate: any, endDate:any) {
 
@@ -85,69 +86,10 @@ const Page3 = () => {
 
     const storedTripInfo = localStorage.getItem('tripInfo');
     const storedUserInfo = localStorage.getItem('userInfo');
-    // let jsonTripInfo: TripInfoTypePayLoad = storedTripInfo ? JSON.parse(storedTripInfo) : null;
-    // let jsonUserInfo: SavedUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
+    let jsonTripInfo: TripInfoTypePayLoad = storedTripInfo ? JSON.parse(storedTripInfo) : null;
+    let jsonUserInfo: SavedUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : null;
 
-    const jsonUserInfo: SavedUserInfo = {
-        userInfo: {
-            name: "John Doe",
-            sex: 1,
-            email: "johndoe@example.com",
-            phone: "+1234567890",
-            birthdate: "1990-01-01",
-            placeOfBirth: {
-                name: "New York",
-                code: "NY",
-            },
-            timeOfBirth: "08:30",
-        },
-        departureCity: {
-            name: "San Francisco",
-            code: "SF",
-        },
-        arrivalCity: {
-            name: "Los Angeles",
-            code: "LA",
-        },
-        tripInfo: {
-            duration: 5,
-            startDate: "2024-12-01",
-            endDate: "2024-12-06",
-            departure: {
-                name: "San Francisco",
-                code: "SF",
-            },
-        },
-    };
     
-    const jsonTripInfo: TripInfoTypePayLoad = {
-        startDate: "2024-12-01",
-        endDate: "2024-12-06",
-        duration: 5,
-        budget: 2000,
-        departure: {
-            name: "San Francisco",
-            code: "SF",
-        },
-        arrival: {
-            name: "Los Angeles",
-            code: "LA",
-        },
-        travelerQuantities: 2,
-        arrivalImg: [
-            "https://kenh14cdn.com/thumb_w/650/2016/n1-1464592882945.jpg",
-                "https://media.istockphoto.com/id/1406960186/vi/anh/%C4%91%C6%B0%E1%BB%9Dng-ch%C3%A2n-tr%E1%BB%9Di-c%E1%BB%A7a-th%C3%A0nh-ph%E1%BB%91-new-york-hoa-k%E1%BB%B3.jpg?s=612x612&w=0&k=20&c=rdZLmhIpV-EIFC7obUd2Ke8-sFelqEZn5eXUer77Fi4=",
-                "https://media.istockphoto.com/id/1454217037/vi/anh/t%C6%B0%E1%BB%A3ng-n%E1%BB%AF-th%E1%BA%A7n-t%E1%BB%B1-do-v%C3%A0-%C4%91%C6%B0%E1%BB%9Dng-ch%C3%A2n-tr%E1%BB%9Di-th%C3%A0nh-ph%E1%BB%91-new-york-v%E1%BB%9Bi-khu-t%C3%A0i-ch%C3%ADnh-manhattan-trung-t%C3%A2m.jpg?s=612x612&w=0&k=20&c=S4eluGOFZJTAyb_Jgim5-nJmkZNMhcy5t4_VOA2kKR0=",
-                "https://usis.us/uploads/images/contents/pr/danh_lam_thang_canh_my_2.jpg",
-                "https://www.thm.vn/media/k2/items/cache/7e64c4d2a4a242251ffdaa790b21fa01_XL.jpg",
-                "https://media.istockphoto.com/id/599766748/vi/anh/th%C3%A0nh-ph%E1%BB%91-c%E1%BB%A7a-nh%E1%BB%AFng-gi%E1%BA%A5c-m%C6%A1-%C4%91%C6%B0%E1%BB%9Dng-ch%C3%A2n-tr%E1%BB%9Di-c%E1%BB%A7a-th%C3%A0nh-ph%E1%BB%91-new-york-l%C3%BAc-ch%E1%BA%A1ng-v%E1%BA%A1ng.jpg?s=612x612&w=0&k=20&c=owVwNNd6z8qSe8NvsyjjkDhmcVDWo6EMkGrPbSmbpVk=",
-                "https://www.tiktok.com/api/img/?itemId=7402612269676350737&location=0&aid=1988",
-                "https://upload.wikimedia.org/wikipedia/commons/0/05/View_of_Empire_State_Building_from_Rockefeller_Center_New_York_City_dllu.jpg",
-                "https://media.istockphoto.com/id/525232662/vi/anh/t%C3%B2a-nh%C3%A0-nh%C3%A0-n%C6%B0%E1%BB%9Bc-%C4%91%E1%BA%BF-ch%E1%BA%BF-new-york-v%C3%A0-t%C6%B0%E1%BB%A3ng-n%E1%BB%AF-th%E1%BA%A7n-t%E1%BB%B1-do.jpg?s=612x612&w=0&k=20&c=EMOwh8nXR-n3e5tlIgHbk1d0iEcIEiYGYziiJs1vvhY=",
-                "https://vemaybaydimy.org.vn/static/ticket/2021/0330/thanh-pho-new-york-ve-dem-4-381_thumb_250x180.jpg"
-        ],
-        arrivalDescription:"The Santorini, Greece offer breathtaking natural beauty with towering cliffs, serene waters, and charming villages. It's a paradise for nature lovers, with opportunities for hiking, fjord cruises, and exploring rich cultural heritage in historic towns like Bergen."
-    };
 
     useEffect(() => {
         console.log('tripData',tripData);
