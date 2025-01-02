@@ -182,7 +182,9 @@ export const Page2 = () => {
 
     return (
         <Box>
-            <ChatComponent />
+            {!loading && 
+                <ChatComponent />
+            }
             <Box sx={{
                 paddingLeft: {
                     md: "7%",
