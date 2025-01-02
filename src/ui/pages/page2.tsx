@@ -12,6 +12,7 @@ import { getFengShuiPrediction, getTripPlanning } from "../../libs/slices/fengSh
 import { validateImage } from "../../services";
 import { useNavigate } from "react-router";
 import { json } from "stream/consumers";
+import ChatComponent from "../components/ChatComponent";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -166,6 +167,7 @@ export const Page2 = () => {
 
     return (
         <Box>
+            <ChatComponent />
             <Box sx={{
                 paddingLeft: {
                     md: "7%",
