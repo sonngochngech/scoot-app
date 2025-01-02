@@ -32,7 +32,7 @@ interface FormState {
     dateOfBirth: Dayjs | null;
     timeOfBirth: Dayjs | null;
     placeOfBirth: { name: string; code: string } | null;
-    placeTravel: string;
+    sex: string;
     travelingFrom: { name: string; code: string } | null;
     timeRange: [Dayjs | null, Dayjs | null];
     desiredDestination: { name: string; code: string } | null;
@@ -55,7 +55,7 @@ const getInitialState = (): FormState => {
                 placeOfBirth: parsedState.placeOfBirth && parsedState.placeOfBirth.name && parsedState.placeOfBirth.code
                     ? { name: parsedState.placeOfBirth.name, code: parsedState.placeOfBirth.code }
                     : null,
-                placeTravel: parsedState.placeTravel || '',
+                sex: parsedState.sex || '',
                 travelingFrom: parsedState.travelingFrom && parsedState.travelingFrom.name && parsedState.travelingFrom.code
                     ? { name: parsedState.travelingFrom.name, code: parsedState.travelingFrom.code }
                     : null,
@@ -76,7 +76,7 @@ const getInitialState = (): FormState => {
             dateOfBirth: null,
             timeOfBirth: null,
             placeOfBirth: null,
-            placeTravel: '',
+            sex: '',
             travelingFrom: null,
             timeRange: [null, null],
             desiredDestination: null,
@@ -89,7 +89,7 @@ const getInitialState = (): FormState => {
         dateOfBirth: null,
         timeOfBirth: null,
         placeOfBirth: null,
-        placeTravel: '',
+        sex: '',
         travelingFrom: null,
         timeRange: [null, null],
         desiredDestination: null,
@@ -152,7 +152,7 @@ export default function FormCustom() {
                 name: formState.name,
                 email: formState.email,
                 birthdate: `${Number(formState.dateOfBirth?.get("year"))}-${Number(formState.dateOfBirth?.get("month"))}-${Number(formState.dateOfBirth?.get("date"))}`,
-                sex: formState.placeTravel === "domestic" ? 0 : 1,
+                sex: formState.sex === "male" ? 0 : 1,
                 phone: formState.phone,
                 timeOfBirth: formState.timeOfBirth ? `${formState.timeOfBirth.format('HH')}:${formState.timeOfBirth.format('mm')}` : null,
                 placeOfBirth: formState.placeOfBirth,
@@ -407,7 +407,7 @@ export default function FormCustom() {
                             fontWeight: "bold",
                             marginBottom: "5px",
                         }}>
-                            You want to travel
+                            You are
                         </Typography>
                         <Grid container>
                             <Grid item md={12} xs={12}>
@@ -418,8 +418,8 @@ export default function FormCustom() {
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                checked={formState.placeTravel === 'domestic'}
-                                                onChange={() => handleInputChange('placeTravel', 'domestic')}
+                                                checked={formState.sex === 'male'}
+                                                onChange={() => handleInputChange('sex', 'male')}
                                                 sx={{
                                                     '& .MuiSvgIcon-root': {
                                                         width: 20,
@@ -435,7 +435,7 @@ export default function FormCustom() {
                                                 }}
                                             />
                                         }
-                                        label="Domestic"
+                                        label="Male"
                                     />
                                 </Box>
                             </Grid>
@@ -447,8 +447,8 @@ export default function FormCustom() {
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                checked={formState.placeTravel === 'abroad'}
-                                                onChange={() => handleInputChange('placeTravel', 'abroad')}
+                                                checked={formState.sex === 'female'}
+                                                onChange={() => handleInputChange('sex', 'female')}
                                                 sx={{
                                                     '& .MuiSvgIcon-root': {
                                                         width: 20,
@@ -464,7 +464,7 @@ export default function FormCustom() {
                                                 }}
                                             />
                                         }
-                                        label="Abroad"
+                                        label="Female"
                                     />
                                 </Box>
                             </Grid>

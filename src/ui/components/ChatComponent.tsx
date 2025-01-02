@@ -31,7 +31,7 @@ interface FormState {
     dateOfBirth: Dayjs | null;
     timeOfBirth: Dayjs | null;
     placeOfBirth: { name: string; code: string } | null;
-    placeTravel: string;
+    sex: string;
     travelingFrom: { name: string; code: string } | null;
     timeRange: [Dayjs | null, Dayjs | null];
     desiredDestination: { name: string; code: string } | null;
@@ -54,7 +54,7 @@ const getInitialState = (): FormState => {
                 placeOfBirth: parsedState.placeOfBirth && parsedState.placeOfBirth.name && parsedState.placeOfBirth.code
                     ? { name: parsedState.placeOfBirth.name, code: parsedState.placeOfBirth.code }
                     : null,
-                placeTravel: parsedState.placeTravel || '',
+                sex: parsedState.sex || '',
                 travelingFrom: parsedState.travelingFrom && parsedState.travelingFrom.name && parsedState.travelingFrom.code
                     ? { name: parsedState.travelingFrom.name, code: parsedState.travelingFrom.code }
                     : null,
@@ -75,7 +75,7 @@ const getInitialState = (): FormState => {
             dateOfBirth: null,
             timeOfBirth: null,
             placeOfBirth: null,
-            placeTravel: '',
+            sex: '',
             travelingFrom: null,
             timeRange: [null, null],
             desiredDestination: null,
@@ -88,7 +88,7 @@ const getInitialState = (): FormState => {
         dateOfBirth: null,
         timeOfBirth: null,
         placeOfBirth: null,
-        placeTravel: '',
+        sex: '',
         travelingFrom: null,
         timeRange: [null, null],
         desiredDestination: null,
