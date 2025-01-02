@@ -16,11 +16,83 @@ import ReactMarkdown from "react-markdown";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { fengShuiAppApi } from "../../assets/api";
+import dayjs, { Dayjs } from "dayjs";
 
 type Message = {
   id: number;
   text: string;
   isUser: boolean;
+};
+
+interface FormState {
+    name: string;
+    phone: string;
+    email: string;
+    dateOfBirth: Dayjs | null;
+    timeOfBirth: Dayjs | null;
+    placeOfBirth: { name: string; code: string } | null;
+    sex: string;
+    travelingFrom: { name: string; code: string } | null;
+    timeRange: [Dayjs | null, Dayjs | null];
+    desiredDestination: { name: string; code: string } | null;
+}
+
+const getInitialState = (): FormState => {
+    try {
+        const storedState = localStorage.getItem('formState');
+        if (storedState) {
+            const parsedState = JSON.parse(storedState);
+            return {
+                name: parsedState.name || '',
+                phone: parsedState.phone || '',
+                email: parsedState.email || '',
+                dateOfBirth: parsedState.dateOfBirth ? dayjs(parsedState.dateOfBirth) : null,
+                timeOfBirth: parsedState.timeOfBirth
+                    ? dayjs().startOf('day').hour(parseInt(parsedState.timeOfBirth.split(':')[0], 10))
+                        .minute(parseInt(parsedState.timeOfBirth.split(':')[1], 10))
+                    : null,
+                placeOfBirth: parsedState.placeOfBirth && parsedState.placeOfBirth.name && parsedState.placeOfBirth.code
+                    ? { name: parsedState.placeOfBirth.name, code: parsedState.placeOfBirth.code }
+                    : null,
+                sex: parsedState.sex || '',
+                travelingFrom: parsedState.travelingFrom && parsedState.travelingFrom.name && parsedState.travelingFrom.code
+                    ? { name: parsedState.travelingFrom.name, code: parsedState.travelingFrom.code }
+                    : null,
+                timeRange: [
+                    parsedState.timeRange?.[0] ? dayjs(parsedState.timeRange[0]) : null,
+                    parsedState.timeRange?.[1] ? dayjs(parsedState.timeRange[1]) : null,
+                ],
+                desiredDestination: parsedState.desiredDestination && parsedState.desiredDestination.name && parsedState.desiredDestination.code
+                    ? { name: parsedState.desiredDestination.name, code: parsedState.desiredDestination.code }
+                    : null,
+            };
+        }
+    } catch {
+        return {
+            name: '',
+            phone: '',
+            email: '',
+            dateOfBirth: null,
+            timeOfBirth: null,
+            placeOfBirth: null,
+            sex: '',
+            travelingFrom: null,
+            timeRange: [null, null],
+            desiredDestination: null,
+        };
+    }
+    return {
+        name: '',
+        phone: '',
+        email: '',
+        dateOfBirth: null,
+        timeOfBirth: null,
+        placeOfBirth: null,
+        sex: '',
+        travelingFrom: null,
+        timeRange: [null, null],
+        desiredDestination: null,
+    };
 };
 
 const Chat = () => {
@@ -69,6 +141,7 @@ const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
 
   const handleSend = async () => {
+    const formState = getInitialState();
     if (message.trim()) {
       setIsShowCancle(false);
       setShowGreetingButton(false);
@@ -81,32 +154,6 @@ const Chat = () => {
       setMessages((prev) => [...prev, userMessage]);
       setMessage("");
       sessionStorage.setItem("chatMessages", JSON.stringify(updatedMessages));
-
-      if (userMessage.text === "Exit") {
-        setChatId("-1");
-        setIsVerified(false);
-
-        const botMessage = {
-          id: messages.length + 2,
-          text: "You have exited your login session! \n\nType something to continue!",
-          isUser: false,
-        };
-
-        setMessages((prev) => [...prev, botMessage]);
-        sessionStorage.setItem(
-          "chatMessages",
-          JSON.stringify([...updatedMessages, botMessage])
-        );
-
-        return;
-      }
-
-      if (chatId === "-1" && isVerified === false) {
-        botSendMess("Please enter your phone!");
-        setIsShowCancle(false);
-        setChatId("");
-        return;
-      }
 
       if (!(!isVerified || chatId === undefined || chatId === null || chatId === "")) {
         setIsTyping(true);
@@ -138,13 +185,13 @@ const Chat = () => {
         }
       } else {
         try {
-          const response = await axios.post(fengShuiAppApi.chatVerify, { phoneNumber: userMessage.text });
+          const response = await axios.post(fengShuiAppApi.chatVerify, { phoneNumber: formState.phone });
 
           if (response.status === 200) {
             if (response.data.code === "00003" || response.data.code === "00001") {
               const botMessage = {
                 id: messages.length + 2,
-                text: response.data.message,
+                text: "No information found!",
                 isUser: false,
               };
 
@@ -157,13 +204,13 @@ const Chat = () => {
               setIsVerified(false);
               setIsShowCancle(true);
             } else if (response.data.code === "00002") {
-              const resInit = await axios.post(fengShuiAppApi.chatInit, { phoneNumber: userMessage.text });
+              const resInit = await axios.post(fengShuiAppApi.chatInit, { phoneNumber: formState.phone });
 
               if (resInit.status === 200) {
                 if (resInit.data.code === "00003" || resInit.data.code === "00001") {
                   const botMessage = {
                     id: messages.length + 2,
-                    text: resInit.data.message,
+                    text: "No information found!",
                     isUser: false,
                   };
 
@@ -215,7 +262,7 @@ const Chat = () => {
   }
 
   const handleGreetingClick = () => {
-    botSendMess(`## Welcome! 🚀 \nWe are happy to assist you.\n## Instructions: \n1. **Enter phone number**: Verify your information. \n2. **Ask questions**: Ask anything you need help with. \n3. **Exit chat session**: Tap "Exit" to log out of this chat session.\n\n`);
+    botSendMess(`## Welcome! 🚀 \nWe are happy to assist you, please ask.\n`);
     setShowGreetingButton(false);
   };
 
@@ -228,14 +275,80 @@ const Chat = () => {
 
   const fetchVerifyStatus = async () => {
     if (!isVerified || chatId === undefined || chatId === null || chatId === "") {
-      botSendMess("Please enter your phone!");
-      setIsShowCancle(false);
-      setChatId("");
+      const userMessage = {
+        id: messages.length + 1,
+        text: message,
+        isUser: true,
+      };
+      const updatedMessages = [...messages, userMessage];
+  
+      if (!isVerified || chatId === undefined || chatId === null || chatId === "") {
+        const formState = getInitialState();
+        try {
+          alert(formState.phone);
+          const response = await axios.post(fengShuiAppApi.chatVerify, { phoneNumber: formState.phone });
+  
+          if (response.status === 200) {
+            if (response.data.code === "00003" || response.data.code === "00001") {
+              const botMessage = {
+                id: messages.length + 2,
+                text: "No information found!",
+                isUser: false,
+              };
+  
+              setMessages((prev) => [...prev, botMessage]);
+              sessionStorage.setItem(
+                "chatMessages",
+                JSON.stringify([...updatedMessages, botMessage])
+              );
+  
+              setIsVerified(false);
+              setIsShowCancle(true);
+            } else if (response.data.code === "00002") {
+              const resInit = await axios.post(fengShuiAppApi.chatInit, { phoneNumber: formState.phone });
+  
+              if (resInit.status === 200) {
+                if (resInit.data.code === "00003" || resInit.data.code === "00001") {
+                  const botMessage = {
+                    id: messages.length + 2,
+                    text: "No information found!",
+                    isUser: false,
+                  };
+  
+                  setMessages((prev) => [...prev, botMessage]);
+                  sessionStorage.setItem(
+                    "chatMessages",
+                    JSON.stringify([...updatedMessages, botMessage])
+                  );
+  
+                  setIsVerified(false);
+                  setIsShowCancle(true);
+                } else if (resInit.data.code === "00002") {
+                  setShowGreetingButton(true);
+                  setIsVerified(true);
+                  setIsShowCancle(false);
+                  setChatId(resInit.data.data._id);
+                  sessionStorage.setItem("chatId", resInit.data.data._id);
+                }
+              } else {
+                botSendMess("Chat bot is busy, please try again later!");
+                setIsShowCancle(true);
+              }
+            }
+          } else {
+            botSendMess("Chat bot is busy, please try again later!");
+            setIsShowCancle(true);
+          }
+        } catch (error) {
+          botSendMess("Chat bot is busy, please try again later!");
+          setIsShowCancle(true);
+        }
+      }
     }
   };
 
   const handleRedirect = () => {
-    if (window.location.href.includes("/trip") || window.location.href.includes("/trip-planning")) {
+    if (window.location.href.includes("/trip") || window.location.href.includes("/page3")) {
       navigate("/");
     } else {
       window.location.reload();
@@ -369,6 +482,7 @@ const Chat = () => {
                   <Typography
                     variant="body1"
                     sx={{
+                      paddingTop: 2,
                       lineHeight: 1.5,
                       hyphens: "auto",
                       overflowWrap: "break-word",
@@ -377,7 +491,7 @@ const Chat = () => {
                       "& ul, & ol": {
                         paddingLeft: 2,
                         marginTop: 0,
-                        marginBottom: 0,
+                        marginBottom: 1,
                       },
                       "& li": {
                         marginBottom: 0.5,

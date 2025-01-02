@@ -12,7 +12,7 @@ export const Page1 = () => {
             <Part2 />
             <Part4 />
             <Part3 />
-            <ChatComponent />
+            {/* <ChatComponent /> */}
         </Box>
     )
 }

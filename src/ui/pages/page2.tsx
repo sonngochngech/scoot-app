@@ -13,6 +13,7 @@ import { validateImage } from "../../services";
 import { useNavigate } from "react-router";
 import { json } from "stream/consumers";
 import Swal from "sweetalert2";
+import ChatComponent from "../components/ChatComponent";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -27,6 +28,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export const Page2 = () => {
+    const MAX_BUDGET = 5000;
     const [budget, setBudget] = useState<number>(0);
     const navigate=useNavigate();
     const handleBudgetChange = (_: Event, newValue: number | number[]) => {
@@ -181,6 +183,9 @@ export const Page2 = () => {
 
     return (
         <Box>
+            {!loading && 
+                <ChatComponent />
+            }
             <Box sx={{
                 paddingLeft: {
                     md: "7%",
@@ -244,7 +249,24 @@ export const Page2 = () => {
                             </Box>
                         }
 
-                        <Typography sx={{
+                        {loading ? (
+                        <Skeleton
+                            variant="text"
+                            sx={{
+                            fontSize: "16px",
+                            width: {
+                                md: "80%",
+                                xs: "100%",
+                            },
+                            marginTop: {
+                                md: "48px",
+                                xs: "38px",
+                            },
+                            }}
+                        />
+                        ) : (
+                        <Typography
+                            sx={{
                             marginTop: {
                                 md: "48px",
                                 xs: "38px",
@@ -254,37 +276,76 @@ export const Page2 = () => {
                                 md: "50px",
                                 xs: 0,
                             },
-                        }}>
+                            }}
+                        >
                             For our customer {renderData?.name}, born on {renderData?.dateOfBirth}
                         </Typography>
+                        )}
+
+                        {loading ? (
+                        <Skeleton
+                            variant="text"
+                            sx={{
+                            fontSize: "16px",
+                            width: {
+                                md: "80%",
+                                xs: "100%",
+                            },
+                            marginTop: {
+                                md: "48px",
+                                xs: "24px",
+                            },
+                            }}
+                        />
+                        ) : (
                         <Typography
                             sx={{
-                                marginTop: {
-                                    md: "48px",
-                                    xs: "24px",
-                                },
-                                fontSize: "16px",
-                                paddingRight: {
-                                    md: "50px",
-                                    xs: 0,
-                                },
+                            marginTop: {
+                                md: "48px",
+                                xs: "24px",
+                            },
+                            fontSize: "16px",
+                            paddingRight: {
+                                md: "50px",
+                                xs: 0,
+                            },
                             }}
                             dangerouslySetInnerHTML={{ __html: renderData?.detailFengShui }}
                         />
+                        )}
+
+                        {loading ? (
+                        <Skeleton
+                            variant="text"
+                            sx={{
+                            fontSize: "16px",
+                            width: {
+                                md: "80%",
+                                xs: "100%",
+                            },
+                            marginTop: {
+                                md: "48px",
+                                xs: "24px",
+                            },
+                            }}
+                        />
+                        ) : (
                         <Typography
                             sx={{
-                                marginTop: {
-                                    md: "48px",
-                                    xs: "24px",
-                                },
-                                fontSize: "16px",
-                                paddingRight: {
-                                    md: "50px",
-                                    xs: 0,
-                                },
+                            marginTop: {
+                                md: "48px",
+                                xs: "24px",
+                            },
+                            fontSize: "16px",
+                            paddingRight: {
+                                md: "50px",
+                                xs: 0,
+                            },
                             }}
                             dangerouslySetInnerHTML={{ __html: renderData?.recommentFengShui }}
                         />
+                        )}
+
                     </Grid>
                     {!isMobile &&
                         <Grid item xs={12} md={4}>
@@ -699,7 +760,7 @@ export const Page2 = () => {
                                                     <Box
                                                         sx={{
                                                             position: "absolute",
-                                                            left: `${(budget / 1000) * 100}%`,
+                                                            left: `${(budget / MAX_BUDGET) * 100}%`,
                                                             transform: "translateX(-50%)",
                                                             top: "-30px",
                                                             backgroundColor: "#FFEB3B",
@@ -719,7 +780,7 @@ export const Page2 = () => {
                                                     <Slider
                                                         value={budget}
                                                         min={0}
-                                                        max={1000}
+                                                        max={MAX_BUDGET}
                                                         onChange={handleBudgetChange}
                                                         sx={{
                                                             color: "#FFEB3B",

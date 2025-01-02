@@ -21,7 +21,6 @@ export interface UserInfoPayLoad{
      sex: number;
      hour: number| string;
      minute: number| string;
-     gender: string;
      date: string;
 
 }
