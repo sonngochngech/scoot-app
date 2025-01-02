@@ -15,8 +15,10 @@ export default function Experience({experiences,imgs}: any){
             <Typography sx={buildVariant(600,'28','36')}>Transform Your Wellness with Santorini's Unique Experiences</Typography>
             <Box sx={{
                 display: 'flex',
+               
                 gap: '16px',
                 flexDirection: 'row',
+               
                 overflowX:{
                     xs:'auto',
                 },
@@ -41,6 +43,8 @@ const ExprienceItem=({header,content,img}:any)=>{
     return(
         <Box sx={{
             backgroundColor:colors.white,
+            flex: '1 0 30%',
+            flexShrink: 0,
             display: 'flex',
             flexDirection: 'column',
             borderRadius: '16px',

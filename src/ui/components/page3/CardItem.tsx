@@ -23,7 +23,7 @@ export const CardItem = ({ location, isMobile, image }: {location:any, isMobile:
     },[image]);
     return (
         <Box sx={{
-            width: isMobile ? '150px' : '28.5vw',
+            width:'100%',
             position: 'relative',
             "&:hover": {
                 cursor: "pointer",
@@ -44,11 +44,11 @@ export const CardItem = ({ location, isMobile, image }: {location:any, isMobile:
                 backgroundColor: '#FFFFFF',
             }}
             >
-                <MapIcon onClick={handleMapClick} />
+                <MapIcon onClick={handleMapClick} sx={{color: 'black'}}/>
             </Box>
             <img src={isValidImage} style={{
-                width: isMobile ? '150px' : '28.5vw',
-                height: isMobile ? '100px' : '14.3vw',
+                width: '100%',
+                height: '200px',
                 borderRadius: '16px',
             }}></img>
             <Typography sx={buildVariant(600,'20','28')}>{location?.name}</Typography>

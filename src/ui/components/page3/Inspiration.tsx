@@ -13,36 +13,41 @@ export default function Inspiration({wardrobe}: any){
             padding:'32px',
             display: 'flex',
             flexDirection:{
-                xs:'column',
-                sm:'row',
+                sm:'column',
+                md:'row',
             }
         }}>
             <Box sx={{
             display: 'flex',
             flexDirection: 'column',
+            flex:{
+                sm:'1 0 100%',
+                md:'1 0 30%',
+            },
+            flexShrink: 0,
             alignItems: 'center',
             justifyContent: 'center',
             padding:{
-                xs:'16px',
-                sm:'32px',
+                sm:'16px',
+                md:'32px',
             },
             borderRadius: '16px',
             minWidth:'275px',
             width:{
-                xs:'100%',
-                sm:'33,33%',
+                sm:'100%',
+                md:'33,33%',
             }
 
         }}>
-                <Typography sx={buildVariant(600,'28','36')}>Feng Shui-Inspired Travel Wardrobe for Santorini</Typography>
-            </Box>
+            <Typography sx={{...buildVariant(600,'28','36')}}>Feng Shui-Inspired Travel Wardrobe for Santorini</Typography>
+        </Box >
             <Box sx={{
                 display: 'flex',
                 gap: '16px',
                 flexDirection: 'row',
                 overflowX:{
-                    xs:'auto',
-                    sm:'none',
+                    md:'auto',
+                    lg:'none',
                 },
                 justifyContent: 'space-between',
                 marginTop:'32px',
@@ -65,6 +70,8 @@ const ExprienceItem=({title,content,img}:any)=>{
         <Box sx={{
             backgroundColor:colors.white,
             display: 'flex',
+            flex:'1 0 45%',
+            flexShrink: 0,
             flexDirection: 'column',
             borderRadius: '16px',
             minWidth:'275px',

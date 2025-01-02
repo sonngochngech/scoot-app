@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Skeleton, Stack, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import BgBanner from '../components/page3/BgBanner';
@@ -27,6 +27,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { SavedUserInfo, TripInfoTypePayLoad } from "../../types";  
 import { json } from 'stream/consumers';
+import Weather from '../components/page3/Weather';
+import { buildVariant } from '../components/page3/theme';
 
 function calculateDuration(startDate: any, endDate:any) {
 
@@ -142,55 +144,171 @@ const Share = () => {
     }, [loading]);
 
     return (
-        <Box sx={{ position: 'relative' }} 
-        >
-            <BgBanner isMobile={isMobile} />
-            <Box className='d-flex justify-content-left align-items-center' sx={{position:'absolute', top: '64px',left:'64px',zIndex:3}}>
-                <img src="/page3/back-arrow.svg"
-                    
-                    onClick={() =>  navigate('-1')}
-                    style={{ cursor: 'pointer', marginRight: '8px',
-                        width:'40px',
-                        height:'40px',
-                     }}
-                    alt="Back arrow"></img>
-                <Typography sx={{
-                    fontWeight: 600,
-                    fontSize: '1rem',
-                    lineHeight: '1.5rem',
-                }}>Back</Typography>
-            </Box>
-            <Box sx={{
-                position: 'absolute', top:  isMobile ?'90px':'15.625vw', zIndex: 3, width: "100%",
-            }}>
-                
-                <Box sx={{ ...box1Style }}>
-                    <BannerBox  city={tripInfo?.arrival} duration={tripInfo?.duration}></BannerBox>
-                </Box>
-                 <Box  sx={box3Style}>
-                  <LocationImageList isMobile={isMobile} imgs={tripInfo?.arrivalImg}  description={tripInfo?.arrivalDescription} />
-                 </Box> 
-                
-                <Stack sx={{ ...box1Style }} spacing={8} >
-                    <Rating rating={null} />
-                    <BdBreakdown isMobile={isMobile} budget={tripData?.totalFee} />
-                    <Tips location={tripInfo?.arrival?.name} tips={tripData?.tips}></Tips>
-                    <Location isMobile={isMobile} itemData={tripData?.locations} itemImage={tripData?.img?.location} title={'Santorini'} />
-                    <Location isMobile={isMobile} itemData={tripData?.foods} itemImage={tripData?.img?.food} title={'Santorini'} />
-                    <Location isMobile={isMobile} itemData={tripData?.accommodation} itemImage={tripData?.img?.accommodation} title={'Santorini'} />
-                    <Inspiration wardrobe={tripData?.wardrobe}/>
-                    <Experience experiences={tripData?.topExperience} imgs={tripInfo?.arrivalImg}/>
-                    <FengShuiFlight/>
-                    <Itinerary itineraries={tripData?.itinerary}  />
-                   
-                </Stack>
+        <Box>
+            <Box sx={{ position: 'relative' }}  >
+                <BgBanner isMobile={isMobile} />
+                <Box className='d-flex justify-content-left align-items-center' sx={{ position: 'absolute', top: '64px', left: '64px', zIndex: 3 }}>
+                    <img src="/page3/back-arrow.svg"
 
-          
+                        onClick={() => navigate('-1')}
+                        style={{
+                            cursor: 'pointer', marginRight: '8px',
+                            width: '40px',
+                            height: '40px',
+                        }}
+                        alt="Back arrow"></img>
+                    <Typography sx={{
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        lineHeight: '1.5rem',
+                    }}>Back</Typography>
+                </Box>
+                <Box sx={{
+                    position: 'absolute', top: isMobile ? '90px' : '15.625vw', zIndex: 3, width: "100%",
+                }} id="target">
+
+                    <Box sx={{ ...box1Style }} >
+                        <BannerBox city={tripInfo?.arrival} duration={tripInfo?.duration}></BannerBox>
+                    </Box>
+                    <Box sx={box3Style}>
+                        <LocationImageList isMobile={isMobile} imgs={tripInfo?.arrivalImg} description={tripInfo?.arrivalDescription} />
+                    </Box>
+
+                    <Stack sx={{ ...box1Style }} spacing={8} >
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={40} />
+                        ) : (
+                            <Rating rating={tripData?.rating} />
+                        )}
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={40} />
+                        ) : (
+                            <FengShuiFlight />
+                        )}
+
+
+                            <Header2 />
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={200} />
+                        ) : (
+                            <Location
+                                isMobile={isMobile}
+                                itemData={tripData?.locations}
+                                itemImage={tripData?.img?.location}
+                                title={'Santorini'}
+                            />
+                        )}
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={200} />
+                        ) : (
+                            <Location
+                                isMobile={isMobile}
+                                itemData={tripData?.foods}
+                                itemImage={tripData?.img?.food}
+                                title={'Santorini'}
+                            />
+                        )}
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={200} />
+                        ) : (
+                            <Location
+                                isMobile={isMobile}
+                                itemData={tripData?.accommodation}
+                                itemImage={tripData?.img?.accommodation}
+                                title={'Santorini'}
+                            />
+                        )}
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={40} />
+                        ) : (
+                            <Tips location={tripInfo?.arrival?.name} tips={tripData?.tips} />
+                        )}
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={200} />
+                        ) : (
+                            <Weather
+                                isMobile={isMobile}
+                                content={tripData?.weather}
+                                tripInfo={tripInfo}
+                            />
+                        )}
+                        <Header3 />
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={200} />
+                        ) : (
+                            <Inspiration wardrobe={tripData?.wardrobe} />
+                        )}
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={200} />
+                        ) : (
+                            <Experience
+                                experiences={tripData?.topExperience}
+                                imgs={tripInfo?.arrivalImg}
+                            />
+                        )}
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={200} />
+                        ) : (
+                            <BdBreakdown isMobile={isMobile} budget={tripData?.totalFee} />
+                        )}
+
+                        {loading ? (
+                            <Skeleton variant="rectangular" height={200} />
+                        ) : (
+                            <Itinerary itineraries={tripData?.itinerary} />
+                        )}
+
+                       
+
+                    </Stack>
+                </Box>
             </Box>
         </Box>
-       
+
+
     );
 };
+
+const Header2 = () => {
+    return (
+        <Box>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <Box component={'img'} src="/page3/header2.svg" sx={{ width: '96px', height: '132px' }} />
+            </Box>
+            <Typography sx={{ ...buildVariant(600, '40', '56'), textAlign: 'center' }}  >DESTINATIONS THAT </Typography>
+            <Typography sx={{ ...buildVariant(600, '40', '56'), textAlign: 'center' }}  >GROUND YOUR ENERGY</Typography>
+        </Box>
+
+    )
+}
+const Header3 = () => {
+    return (
+        <Box>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <Box component={'img'} src="/page3/header3.svg" sx={{ width: '96px', height: '132px' }} />
+            </Box>
+            <Typography sx={{ ...buildVariant(600, '40', '56'), textAlign: 'center' }}  >PERSONALIZED FOR</Typography>
+            <Typography sx={{ ...buildVariant(600, '40', '56'), textAlign: 'center' }}  >INNER HARMONY</Typography>
+        </Box>
+
+    )
+}
 
 
 export default Share;
