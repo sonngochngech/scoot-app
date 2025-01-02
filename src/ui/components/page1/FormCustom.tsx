@@ -24,6 +24,7 @@ import cities from '../../../assets/cities.json';
 import { SavedUserInfo } from "../../../types";
 import { getFengShuiPrediction } from "../../../libs/slices/fengShuiSlice";
 import CustomAutocomplete from "./CustomAutocomplete";
+import Swal from "sweetalert2";
 
 interface FormState {
     name: string;
@@ -144,7 +145,7 @@ export default function FormCustom() {
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const handleSubmit = () => {
+    const handleSubmit = (event: React.FormEvent) => {
         const startDate = formState.timeRange[0] || dayjs();
         const endDate = formState.timeRange[1] || startDate;
         const luckyTravelInfor: SavedUserInfo = {
@@ -175,6 +176,18 @@ export default function FormCustom() {
 
         localStorage.setItem("userInfo", JSON.stringify(luckyTravelInfor));
         if (!isFormStateInvalid(formState)) {
+            let currentYear = new Date().getFullYear();
+            if (!formState.dateOfBirth || currentYear - formState.dateOfBirth?.get("year") <= 3) {
+                Swal.fire({
+                  icon: "warning",
+                  confirmButtonText: "Agree",
+                  title: "<strong>Notification</strong>",
+                  text: "You are not old enough for a Major Luck Cycle!",
+                });
+                event.preventDefault();
+                return;
+              }
+
             navigate('/trip');
         }
     }
