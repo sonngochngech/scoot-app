@@ -151,10 +151,10 @@ export default function FormCustom() {
             userInfo: {
                 name: formState.name,
                 email: formState.email,
-                birthdate: `${Number(formState.timeOfBirth?.get("year"))}-${Number(formState.timeOfBirth?.get("month"))}-${Number(formState.timeOfBirth?.get("date"))}`,
+                birthdate: `${Number(formState.dateOfBirth?.get("year"))}-${Number(formState.dateOfBirth?.get("month"))}-${Number(formState.dateOfBirth?.get("date"))}`,
                 sex: formState.placeTravel === "domestic" ? 0 : 1,
                 phone: formState.phone,
-                timeOfBirth: `${Number(formState.timeOfBirth?.get("hour"))}:${Number(formState.timeOfBirth?.get("minute"))}`,
+                timeOfBirth: formState.timeOfBirth ? `${formState.timeOfBirth.format('HH')}:${formState.timeOfBirth.format('mm')}` : null,
                 placeOfBirth: formState.placeOfBirth,
             },
             departureCity: formState.travelingFrom,
